@@ -107,6 +107,7 @@ router
             ctx.body = {};
             next();
         } catch (e) {
+            ctx.log.error(e);
             return ctx.throw(500, INTERNAL_SERVER_ERROR)
         }
     })
