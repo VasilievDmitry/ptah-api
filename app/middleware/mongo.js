@@ -24,19 +24,17 @@ const mongo = (dsn, customConnectionOptions) => {
     const dsnParsed = new DSNParser(dsn);
     const dbName = dsnParsed.get('database');
 
-    let mongoConnection;
-
     return async (ctx, next) => MongoClient.connect(dsn, connectionOptions)
         .then(async (connection) => {
-            mongoConnection = connection;
-            ctx.mongo = mongoConnection.db(dbName);
+            ctx.mongoConnection = connection;
+            ctx.mongo = connection.db(dbName);
             await next();
         })
         .then(async () => {
-            if (mongoConnection) mongoConnection.close();
+            if (ctx.mongoConnection) ctx.mongoConnection.close();
         })
         .catch(async (error) => {
-            if (mongoConnection) mongoConnection.close();
+            if (ctx.mongoConnection) ctx.mongoConnection.close();
             throw error;
         });
 };
