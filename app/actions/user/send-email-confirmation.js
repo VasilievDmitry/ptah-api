@@ -1,6 +1,7 @@
 'use strict';
 
 const {AUTHENTICATION_ERROR} = require('../../../config/errors');
+const Factory = require('../../classes/factory');
 
 module.exports = async (ctx, next) => {
     try {
