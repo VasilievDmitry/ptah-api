@@ -6,7 +6,7 @@ const envUtils = require('../app/utils/env');
 const getEnvVariable = envUtils.getEnvVariable;
 const getEnvVariableArray = envUtils.getEnvVariableArray;
 
-const publicHtmlDir = getEnvVariable('PUBLIC_HTML_DIR', 'public_html');
+const landingsHtmlDir = getEnvVariable('LANDINGS_HTML_DIR', 'landings_html');
 const nginxConfigsDir = getEnvVariable('NGINX_CONFIGS_DIR', 'sites_enabled');
 
 const config = {
@@ -14,19 +14,23 @@ const config = {
 
     mongoDsn: getEnvVariable('MONGO_DSN', ''),
 
+    publicHost: getEnvVariable('PUBLIC_HOST', ''),
+
+    landingsPublishingHost: getEnvVariable('LANDINGS_PUBLISHING_HOST', ''),
+
     dbLandingsCollectionName: 'ptah-landings',
     dbUsersCollectionName: 'ptah-users',
-
-    redisHost: getEnvVariable('REDIS_HOST', '127.0.0.1'),
-    redisPort: +getEnvVariable('REDIS_PORT', '6379'),
+    dbUsersSessionsCollectionName: 'ptah-users-sessions',
 
     routesPrefix: getEnvVariable('ROUTES_PREFIX', '/api/v1'),
 
+    authRoutesNamespace: '/auth',
     landingsRoutesNamespace: '/landings',
     mailchimpRoutesNamespace: '/mailchimp',
     userRoutesNamespace: '/user',
+    uploadRoutesNamespace: '/upload',
 
-    publicHtmlDir: path.resolve(publicHtmlDir),
+    landingsHtmlDir: path.resolve(landingsHtmlDir),
     nginxConfigsDir: path.resolve(nginxConfigsDir),
     nginxConfigTemplatePath: path.resolve('templates/nginx.conf.template'),
 
@@ -35,13 +39,55 @@ const config = {
     mailchimpMetadataUrl: getEnvVariable('MAILCHIMP_METADATA_URL', 'https://login.mailchimp.com/oauth2/metadata'),
     mailchimpMaillistsPath: getEnvVariable('MAILCHIMP_MAILLISTS_PATH', '/3.0/lists'),
 
-    auth1ClientId: getEnvVariableArray('AUTH1_CLIENT_ID', '5c6a9d5568add43d9cb21826'),
-    auth1ClientSecret: getEnvVariable('AUTH1_CLIENT_SECRET', 'RUOuk4bkWFNljuZzqwq5zrs0GdCLY9U3MJqubuDViUv7XQzgiU84y288Jh0klK1Z'),
-    auth1Issuer: getEnvVariable('AUTH1_ISSUER_URL', 'https://auth1.tst.protocol.one/oauth2/introspect'),
-
-    userIdStatePath: 'state.auth1.sub',
+    userStatePath: 'state.user',
+    userIdStatePath: 'state.user._id',
 
     corsValidOrigins: getEnvVariableArray('CORS_VALID_ORIGINS', '*'),
+
+    authCheckUserAgent: getEnvVariable('AUTH_CHECK_USER_AGENT', '') === 'true',
+    authCheckIP: getEnvVariable('AUTH_CHECK_IP', '') === 'true',
+
+    authTokenSecret: getEnvVariable('AUTH_TOKEN_SECRET', ''),
+    accessTokenLifetime: +getEnvVariable('ACCESS_TOKEN_LIFETIME', 1) * 60 * 60,
+    refreshTokenLifetime: +getEnvVariable('REFRESH_TOKEN_LIFETIME', 72) * 60 * 60,
+
+    passwordSecret: getEnvVariable('PASSWORD_SECRET', ''),
+
+    restorePasswordSecret: getEnvVariable('RESTORE_PASSWORD_SECRET', ''),
+    restorePasswordLifetime: +getEnvVariable('RESTORE_PASSWORD_LIFETIME', 15) * 60,
+
+    confirmEmailSecret: getEnvVariable('CONFIRM_EMAIL_SECRET', ''),
+    confirmEmailLifetime: +getEnvVariable('CONFIRM_EMAIL_LIFETIME', 24) * 60 * 60,
+
+    emailpostmarkToken: getEnvVariable('EMAIL_POSTMARK_TOKEN', ''),
+    emailSenderFrom: getEnvVariable('EMAIL_SENDER_FROM', ''),
+
+    emailTemplateConfirmEmail: +getEnvVariable('EMAIL_TEMPLATE_CONFIRM_EMAIL', ''),
+    emailTemplateUserSignupLocal: +getEnvVariable('EMAIL_TEMPLATE_USER_SIGNUP_LOCAL', ''),
+    emailTemplateUserSignupSocial: +getEnvVariable('EMAIL_TEMPLATE_USER_SIGNUP_SOCIAL', ''),
+    emailTemplateRestorePassword: +getEnvVariable('EMAIL_TEMPLATE_RESTORE_PASSWORD', ''),
+    emailTemplateRestorePasswordRequest: +getEnvVariable('EMAIL_TEMPLATE_RESTORE_PASSWORD_REQUEST', ''),
+
+    googleAuthClientId: getEnvVariable('GOOGLE_AUTH_CLIENT_ID', ''),
+    googleAuthClientSecret: getEnvVariable('GOOGLE_AUTH_CLIENT_SECRET', ''),
+
+    mailchimpAuthClientId: getEnvVariable('MAILCHIMP_AUTH_CLIENT_ID', ''),
+    mailchimpAuthClientSecret: getEnvVariable('MAILCHIMP_AUTH_CLIENT_SECRET', ''),
+
+    s3AccessKeyId: getEnvVariable('S3_ACCESS_KEY_ID', ''),
+    s3SecretAccessKey: getEnvVariable('S3_SECRET_ACCESS_KEY', ''),
+    s3Bucket: getEnvVariable('S3_BUCKET', ''),
+    s3Region: getEnvVariable('S3_REGION', ''),
+    cdnHost: getEnvVariable('CDN_HOST', ''),
+    cdnPath: getEnvVariable('CDN_PATH', ''),
+
+    passwordRequirements: {
+        length: 8,
+        lowercase: false,
+        uppercase: false,
+        numbers: true,
+        symbols: false,
+    }
 
 };
 
