@@ -206,14 +206,18 @@ class User {
     }
 
     async findByToken(token, secret) {
-        const decoded = jwt.verify(token, secret);
+        try {
+            const decoded = jwt.verify(token, secret);
 
-        const condition = {
-            _id: ObjectID(decoded.id),
-            email: decoded.email
-        };
-
-        await this.find(condition);
+            const condition = {
+                _id: ObjectID(decoded.id),
+                email: decoded.email
+            };
+            return await this.find(condition);
+        } catch (e) {
+            this.ctx.log.error(e);
+            return null;
+        }
     }
 
     async find(conditions) {
