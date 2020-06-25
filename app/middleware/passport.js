@@ -1,12 +1,12 @@
 "use strict";
 
-const urlJoin = require('url-join');
+// const urlJoin = require('url-join');
 const passport = require('koa-passport');
 
 const config = require('../../config/config');
 const {REGISTRATION_SOURCE_GOOGLE, REGISTRATION_SOURCE_MAILCHIMP} = require('./../classes/user.class');
 
-const authRoutesNamespace = config.authRoutesNamespace;
+// const authRoutesNamespace = config.authRoutesNamespace;
 
 const getSocialUser = function (req, name, email, accessToken, refreshToken, source) {
     return {
@@ -25,7 +25,7 @@ if (config.googleAuthClientId && config.googleAuthClientSecret) {
     passport.use(new GoogleStrategy({
             clientID: config.googleAuthClientId,
             clientSecret: config.googleAuthClientSecret,
-            callbackURL: urlJoin([config.publicHost, '']), // todo send callbackUrl with path
+            // callbackURL: urlJoin([config.publicHost, '']), // todo send callbackUrl with path
             // `${authRoutesNamespace}/google/callback`
             passReqToCallback: true
         },
@@ -47,7 +47,7 @@ if (config.mailchimpAuthClientId && config.mailchimpAuthClientSecret) {
     passport.use(new MailChimpStrategy({
             clientID: config.mailchimpAuthClientId,
             clientSecret: config.mailchimpAuthClientSecret,
-            callbackURL: urlJoin([config.publicHost, `${authRoutesNamespace}/mailchimp/callback`]),
+            // callbackURL: urlJoin([config.publicHost, `${authRoutesNamespace}/mailchimp/callback`]),
             passReqToCallback: true
         },
         async (req, accessToken, refreshToken, profile, done) => {
