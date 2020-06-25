@@ -1,12 +1,10 @@
 "use strict";
 
-// const urlJoin = require('url-join');
+const urlJoin = require('url-join');
 const passport = require('koa-passport');
 
 const config = require('../../config/config');
 const {REGISTRATION_SOURCE_GOOGLE, REGISTRATION_SOURCE_MAILCHIMP} = require('./../classes/user.class');
-
-// const authRoutesNamespace = config.authRoutesNamespace;
 
 const getSocialUser = function (req, name, email, accessToken, refreshToken, source) {
     return {
