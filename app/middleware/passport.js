@@ -25,8 +25,7 @@ if (config.googleAuthClientId && config.googleAuthClientSecret) {
     passport.use(new GoogleStrategy({
             clientID: config.googleAuthClientId,
             clientSecret: config.googleAuthClientSecret,
-            // callbackURL: urlJoin([config.publicHost, '']), // todo send callbackUrl with path
-            // `${authRoutesNamespace}/google/callback`
+            callbackURL: urlJoin([config.publicHost, '/oauth2']),
             passReqToCallback: true
         },
         async (req, accessToken, refreshToken, profile, done) => {
@@ -47,7 +46,7 @@ if (config.mailchimpAuthClientId && config.mailchimpAuthClientSecret) {
     passport.use(new MailChimpStrategy({
             clientID: config.mailchimpAuthClientId,
             clientSecret: config.mailchimpAuthClientSecret,
-            // callbackURL: urlJoin([config.publicHost, `${authRoutesNamespace}/mailchimp/callback`]),
+            callbackURL: urlJoin([config.publicHost, '/oauth2']),
             passReqToCallback: true
         },
         async (req, accessToken, refreshToken, profile, done) => {
