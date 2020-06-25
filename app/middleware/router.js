@@ -12,7 +12,7 @@ const {REGISTRATION_SOURCE_MAILCHIMP} = require('./../classes/user.class');
 const generatePassword = require('../utils/password').generatePassword;
 
 
-const preventRedirect = async function (ctx, next, scope,  skipAuthCheck) {
+const preventRedirect = async function (ctx, next, scope, skipAuthCheck) {
 
     if (!skipAuthCheck && ctx.user && ctx.user.User) {
         // user already logged in
@@ -141,8 +141,7 @@ router
     .get(`${mailchimpRoutesNamespace}/login`,
         passport.authenticate('mailchimp', {session: false, preventRedirect: true}),
         async (ctx, next) => {
-            ctx.socialAuth = REGISTRATION_SOURCE_MAILCHIMP;
-            return await preventRedirect(ctx, next, skipAuthCheck)
+            return await preventRedirect(ctx, next, '', true)
         },
     )
     // Mailchimp authentication callback
