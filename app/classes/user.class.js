@@ -64,7 +64,7 @@ class User {
     }
 
     async FindByEmail(email) {
-        const condition = {email: email};
+        const condition = {email: email.toLowerCase()};
         return await this.find(condition);
     }
 
@@ -84,7 +84,7 @@ class User {
         try {
             const user = {
                 name: name || '',
-                email: email,
+                email: email.toLowerCase(),
                 password: await Crypt(this.params.passwordSecret, password),
                 registrationSource: registrationSource  || '',
             }
