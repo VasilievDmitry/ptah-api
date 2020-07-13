@@ -17,6 +17,14 @@ const allowedTypes = [
         type: 'image/png',
         extention: 'png',
     },
+    {
+        type: 'video/mp4',
+        extention: 'mp4',
+    },
+    {
+        type: 'video/webm',
+        extention: 'webm',
+    },
 ];
 const maxFileSizeInMb = 30;
 const maxFileSize = maxFileSizeInMb * 1024 * 1024;
