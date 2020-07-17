@@ -14,6 +14,14 @@ const allowedTypes = [
         extention: 'jpg',
     },
     {
+        type: 'image/gif',
+        extention: 'gif',
+    },
+    {
+        type: 'image/svg+xml',
+        extention: 'svg',
+    },
+    {
         type: 'image/png',
         extention: 'png',
     },
