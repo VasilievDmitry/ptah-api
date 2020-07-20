@@ -43,7 +43,7 @@
     "koa-router": "^7.4.0",
     "koa-unless": "^1.0.7",
     "koa2-cors": "^2.0.6",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "migrate-mongo": "^7.0.1",
     "mongodb": "^3.3.4",
     "passport-google-oauth2": "^0.2.0",
