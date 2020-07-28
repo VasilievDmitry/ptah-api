@@ -10,6 +10,7 @@ module.exports = {
     AUTHENTICATION_ERROR: 'authentication_error',
     FORBIDDEN: 'forbidden',
     BAD_REQUEST: 'bad_request',
+    CONFLICT: 'Conflict',
     NOT_FOUND: 'not_found',
     CANT_CREATE_SESSION: 'cant_create_session',
     USER_NAME_IS_REQUIRED: 'user_name_is_required',
