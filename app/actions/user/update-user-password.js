@@ -1,6 +1,6 @@
 'use strict';
 
-const {AUTHENTICATION_ERROR, USER_PASSWORD_IS_REQUIRED, USER_WEAK_PASSWORD} = require('../../../config/errors');
+const {AUTHENTICATION_ERROR, USER_PASSWORD_IS_REQUIRED, USER_WEAK_PASSWORD, OLD_PASSWORD_MISMATCH} = require('../../../config/errors');
 
 const checkPasswordStrength = require('../../utils/password').checkPasswordStrength;
 
@@ -27,7 +27,7 @@ module.exports = async (ctx, next) => {
         }
 
         if (!await user.CheckUserPassword(oldPassword)) {
-            return ctx.throw(401, AUTHENTICATION_ERROR);
+            return ctx.throw(400, OLD_PASSWORD_MISMATCH);
         }
 
         await user.SetNewPassword(password);
