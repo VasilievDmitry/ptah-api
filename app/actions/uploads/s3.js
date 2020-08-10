@@ -26,6 +26,10 @@ const allowedTypes = [
         extention: 'png',
     },
     {
+        type: 'application/pdf',
+        extention: 'pdf',
+    },
+    {
         type: 'video/mp4',
         extention: 'mp4',
     },
