@@ -13,3 +13,7 @@ module.exports.users = function (ctx) {
 module.exports.users_sessions = function (ctx) {
     return ctx.mongo.collection(config.dbUsersSessionsCollectionName)
 };
+
+module.exports.users_uploads = function (ctx) {
+    return ctx.mongo.collection(config.dbUsersUploadsCollectionName)
+};

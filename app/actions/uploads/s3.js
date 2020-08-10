@@ -1,45 +1,13 @@
 const fs = require('fs');
-const _ = require('lodash');
-const { v4: uuidv4 } = require('uuid');
+const {v4:uuidv4} = require('uuid');
 const aws = require('aws-sdk');
 const urlJoin = require('url-join');
+const md5File = require('md5-file');
 
+const Factory = require('../../classes/factory');
 const config = require('../../../config/config');
 
-const {AUTHENTICATION_ERROR, BAD_REQUEST, FILE_TYPE_DISALLOWED, FILE_SIZE_LIMIT_EXCEEDED} = require('../../../config/errors');
-
-const allowedTypes = [
-    {
-        type: 'image/jpeg',
-        extention: 'jpg',
-    },
-    {
-        type: 'image/gif',
-        extention: 'gif',
-    },
-    {
-        type: 'image/svg+xml',
-        extention: 'svg',
-    },
-    {
-        type: 'image/png',
-        extention: 'png',
-    },
-    {
-        type: 'application/pdf',
-        extention: 'pdf',
-    },
-    {
-        type: 'video/mp4',
-        extention: 'mp4',
-    },
-    {
-        type: 'video/webm',
-        extention: 'webm',
-    },
-];
-const maxFileSizeInMb = 30;
-const maxFileSize = maxFileSizeInMb * 1024 * 1024;
+const {AUTHENTICATION_ERROR, BAD_REQUEST, FILE_TYPE_DISALLOWED, FILE_SIZE_LIMIT_EXCEEDED, FILE_SIZE_QUOTE_EXCEEDED, FILE_ALREADY_UPLOADED} = require('../../../config/errors');
 
 module.exports = async (ctx, next) => {
     try {
@@ -53,16 +21,30 @@ module.exports = async (ctx, next) => {
             return ctx.throw(400, BAD_REQUEST);
         }
 
-        const fileType = _.find(allowedTypes, {type: file.type});
+        const userUploads = Factory.UserUploads(ctx);
+
+        const fileType = userUploads.GetFileType(file.type);
         if (!fileType) {
             return ctx.throw(400, FILE_TYPE_DISALLOWED);
 
         }
-        if (file.size > maxFileSize) {
+        if (!userUploads.IsFileSizeOk(file.size)) {
             return ctx.throw(400, FILE_SIZE_LIMIT_EXCEEDED);
         }
 
+        if (!userUploads.IsUserUploadQuoteOk(file.size)) {
+            return ctx.throw(400, FILE_SIZE_QUOTE_EXCEEDED);
+        }
+
+        const hash = await getFileHash(ctx, file.path);
+        const found = await userUploads.FindByHash(hash)
+        if (found.length) {
+            return ctx.throw(400, FILE_ALREADY_UPLOADED);
+        }
+
         const result = await uploadFile(file, fileType, user.GetId(), config);
+
+        await userUploads.Add(file, result.file.name, hash)
 
         ctx.status = 200;
         ctx.body = result;
@@ -117,5 +99,16 @@ const uploadFile = function (file, fileType, userId, config) {
             },
         );
     });
+}
+
+const getFileHash = async function(ctx, filepath) {
+    return new Promise((resolve, reject) => {
+        md5File(filepath).then((hash) => {
+            return resolve(hash);
+        }).catch((e) => {
+            ctx.log.error(e);
+            return resolve('')
+        })
+    })
 }
 

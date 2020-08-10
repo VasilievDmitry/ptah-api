@@ -23,4 +23,6 @@ module.exports = {
     INTERNAL_SERVER_ERROR: 'internal_server_error',
     FILE_TYPE_DISALLOWED: 'file_type_disallowed',
     FILE_SIZE_LIMIT_EXCEEDED: 'file_size_limit_exceeded',
+    FILE_SIZE_QUOTE_EXCEEDED: 'file_size_quote_exceeded',
+    FILE_ALREADY_UPLOADED: 'file_already_uploaded',
 };

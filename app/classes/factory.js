@@ -1,5 +1,7 @@
 "use strict";
 
+const _ = require('lodash');
+
 const config = require('../../config/config');
 
 const getDbCollection = require('./../utils/get-db-collection');
@@ -7,6 +9,7 @@ const getDbCollection = require('./../utils/get-db-collection');
 const {Mail} = require('./mail.class');
 const {User} = require('./user.class');
 const {UserSession} = require('./user-session.class');
+const {UserUploads} = require('./user-uploads.class');
 
 module.exports = {
 
@@ -66,5 +69,24 @@ module.exports = {
         }
 
         return new UserSession(ctx, collection, params);
+    },
+
+    UserUploads: function(ctx, params, collection) {
+        if (!ctx && !collection) {
+            throw new Error('no collection and no ctx')
+        }
+
+        if (ctx && !collection) {
+            collection = getDbCollection.users_uploads(ctx)
+        }
+
+        params = Object.assign({}, {
+            userId: _.get(ctx, config.userIdStatePath, ''),
+            maxFileSize: config.maxFileSize,
+            maxTotalFilesSize: config.maxTotalFilesSize,
+        }, params || {});
+
+
+        return new UserUploads(ctx, collection, params);
     }
 };

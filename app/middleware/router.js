@@ -136,6 +136,7 @@ router
     .post(`${userRoutesNamespace}/password`, koaBody, require('../actions/user/update-user-password'))
     .delete(`${userRoutesNamespace}/mailchimp`, require('../actions/user/disable-user-mailchimp-intergration'))
     .get(`${userRoutesNamespace}/send_email_confirmation`, require('../actions/user/send-email-confirmation'))
+    .get(`${userRoutesNamespace}/uploads`, require('../actions/landings/get-uploads'))
 
     // Mailchimp authentication route
     .get(`${mailchimpRoutesNamespace}/login`,

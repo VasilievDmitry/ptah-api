@@ -109,6 +109,10 @@ Notice! Value of * uses by default (disable CORS protection)
 
 {CDN_PATH} - common path on CDN  
 
+{MAX_FILE_SIZE} - max per-file size limit for uploads, in bytes, default is 31457280 (30 Mb)
+
+{MAX_TOTAL_FILES_SIZE} - max user quote for file uploads, in bytes, default is 52428800 (50 Mb)
+
 ## Tests
 
 Integration tests are require an live MongoDB server connection

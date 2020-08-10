@@ -21,6 +21,7 @@ const config = {
     dbLandingsCollectionName: 'ptah-landings',
     dbUsersCollectionName: 'ptah-users',
     dbUsersSessionsCollectionName: 'ptah-users-sessions',
+    dbUsersUploadsCollectionName: 'ptah-users-uploads',
 
     routesPrefix: getEnvVariable('ROUTES_PREFIX', '/api/v1'),
 
@@ -87,7 +88,11 @@ const config = {
         uppercase: false,
         numbers: true,
         symbols: false,
-    }
+    },
+
+    maxFileSize: +getEnvVariable('MAX_FILE_SIZE', 30) * 1024 * 1024,
+
+    maxTotalFilesSize: +getEnvVariable('MAX_TOTAL_FILES_SIZE', 50) * 1024 * 1024,
 
 };
 

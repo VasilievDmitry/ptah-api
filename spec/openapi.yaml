@@ -2093,6 +2093,53 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorUnathorized'
 
+  /api/v1/user/uploads:
+    get:
+      tags:
+        - User
+      summary: User uploads list
+      operationId: userUploads
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of files, uploaded by user
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUploadsList'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
   /api/v1/mailchimp/login:
     get:
       tags:
@@ -2589,6 +2636,67 @@ components:
           properties:
             landing:
               $ref: '#/components/schemas/Landing'
+
+    UserUploadsList:
+      type: object
+      required:
+        - uploads
+        - count
+        - totalSize
+        - quoteRest
+      properties:
+        uploads:
+          type: array
+          description: uploaded files array
+          items:
+            $ref: '#/components/schemas/UserUpload'
+        count:
+          type: number
+          description: total uploads count
+          example: 3
+        totalSize:
+          type: number
+          description: total uploads filze size
+          example: 240367
+        quoteRest:
+          type: number
+          description: rest of user's quote for uploads
+          example: 52188433
+
+    UserUpload:
+      type: object
+      required:
+        - type
+        - mimeType
+        - originalFilename
+        - url
+        - filesize
+        - createdAt
+      properties:
+        type:
+          type: string
+          description: general file type group
+          example: 'image'
+        mimeType:
+          type: string
+          description: mime type for file
+          example: image/jpeg
+        originalFilename:
+          type: string
+          description: original name of uploaded file
+          example: test.jpg
+        url:
+          type: string
+          description: link to file
+          example: https://cdn.ptah.pro/tst/5ef4666d60169500016fad67/68b6ec0a-2d04-48f3-89b8-e65998846e3e.jpg
+        filesize:
+          type: number
+          description: size of upladed file in bytes
+          example: 177547
+        createdAt:
+          type: string
+          description: upload date and time
+          example: '2020-08-10T13:47:38.373Z'
 
     UserInfo:
       type: object
