@@ -64,6 +64,8 @@ backend:
     - S3_REGION
     - CDN_HOST
     - CDN_PATH
+    - MAX_FILE_SIZE
+    - MAX_TOTAL_FILES_SIZE
 
 frontend:
   name: nginx
