@@ -90,9 +90,9 @@ const config = {
         symbols: false,
     },
 
-    maxFileSize: +getEnvVariable('MAX_FILE_SIZE', 30) * 1024 * 1024,
+    maxFileSize: +getEnvVariable('MAX_FILE_SIZE', 30 * 1024 * 1024),
 
-    maxTotalFilesSize: +getEnvVariable('MAX_TOTAL_FILES_SIZE', 50) * 1024 * 1024,
+    maxTotalFilesSize: +getEnvVariable('MAX_TOTAL_FILES_SIZE', 50 * 1024 * 1024),
 
 };
 
