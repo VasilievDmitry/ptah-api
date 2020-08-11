@@ -28,7 +28,7 @@ module.exports = async (ctx, next) => {
             }),
             count: uploads.length,
             totalSize: totalSize,
-            quoteRest: quoteRest < 0 ? 0 : quoteRest,
+            quoteRest: quoteRest,
         }
     } catch (err) {
         throw err

@@ -32,7 +32,7 @@ module.exports = async (ctx, next) => {
             return ctx.throw(400, FILE_SIZE_LIMIT_EXCEEDED);
         }
 
-        if (!userUploads.IsUserUploadQuoteOk(file.size)) {
+        if (!await userUploads.IsUserUploadQuoteOk(file.size)) {
             return ctx.throw(400, FILE_SIZE_QUOTE_EXCEEDED);
         }
 

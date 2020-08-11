@@ -136,7 +136,7 @@ class UserUploads {
 
     async GetUserQuoteRest() {
         const spaceUsed = await this.getUserUploadsSize();
-        return this.params.maxTotalFilesSize - spaceUsed;
+        return Math.max(this.params.maxTotalFilesSize - spaceUsed, 0);
     }
 
     async IsUserUploadQuoteOk(filesize) {
