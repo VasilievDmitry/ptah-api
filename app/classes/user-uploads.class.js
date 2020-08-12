@@ -164,7 +164,7 @@ class UserUploads {
     async find(conditions) {
         const options = {
             projection: this.projection,
-            sort: {_id: 1}
+            sort: {_id: -1}
         };
 
         const defaultConditions = {};
