@@ -2,6 +2,7 @@
 
 const getDbCollection = require('../utils/get-db-collection');
 const subscriptionStates = require('./subscription-state');
+const {PUBLIC_FIELDS} = require('./user.class');
 
 class UsersList {
 
@@ -16,6 +17,42 @@ class UsersList {
             isDeleted: false
         }
         return this.find(condition);
+    }
+
+    async GetByFilters(filters = {}, limit = 100, offset = 0) {
+        const condition = {
+            isDeleted: false
+        }
+
+        filters = filters || {};
+
+        if (filters.hasOwnProperty('subscriptionState')) {
+            condition.subscriptionState = filters.subscriptionState;
+        }
+
+        if (filters.hasOwnProperty('emailConfirmed')) {
+            condition.emailConfirmed = filters.emailConfirmed;
+        }
+
+        if (filters.hasOwnProperty('mailchimpIntegration')) {
+            condition.mailchimpIntegration = filters.mailchimpIntegration;
+        }
+
+        if (filters.hasOwnProperty('tariff')) {
+            condition.tariff = filters.tariff;
+        }
+
+        const projection = {};
+        PUBLIC_FIELDS.forEach(f => projection[f] = 1);
+
+        const foundUsers = this.find(condition, projection);
+
+        return {
+            limit: limit,
+            offset: offset,
+            total: foundUsers.length,
+            users: foundUsers.slice(offset, offset + limit)
+        }
     }
 
     async GetSuspendedBilling() {
@@ -52,11 +89,12 @@ class UsersList {
         return this.find(condition);
     }
 
-    async find(conditions) {
+    async find(conditions, projection) {
         conditions = conditions || {};
+        projection = projection || {};
 
         const options = {
-            projection: {}
+            projection: projection,
         };
 
         const query = Object.assign({}, conditions, {})

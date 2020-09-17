@@ -13,6 +13,9 @@ const REGISTRATION_SOURCE_LOCAL = 'local';
 const REGISTRATION_SOURCE_GOOGLE = 'google';
 const REGISTRATION_SOURCE_MAILCHIMP = 'mailchimp';
 
+const PUBLIC_FIELDS = ['_id', 'name', 'email', 'emailConfirmed', 'mailchimpIntegration',
+    'registrationSource', 'createDate', 'updateDate', 'tariff', 'subscriptionState', 'cardBrand', 'cardLast4'];
+
 function getDefaultUser() {
     const now = (new Date).toISOString();
     const id = ObjectID();
@@ -43,8 +46,7 @@ class User {
 
     omitFields = [];
 
-    publicFields = ['_id', 'name', 'email', 'emailConfirmed', 'mailchimpIntegration',
-        'registrationSource', 'createDate', 'updateDate', 'tariff', 'subscriptionState', 'cardBrand', 'cardLast4'];
+    publicFields = PUBLIC_FIELDS;
 
 
     /*
@@ -438,6 +440,7 @@ class User {
 
 module.exports = {
     User,
+    PUBLIC_FIELDS,
     REGISTRATION_SOURCE_LOCAL,
     REGISTRATION_SOURCE_GOOGLE,
     REGISTRATION_SOURCE_MAILCHIMP,

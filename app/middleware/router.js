@@ -187,22 +187,26 @@ router
 
     .post(`${uploadRoutesNamespace}/`, koaBody, require('../actions/uploads/s3'))
 
+    .get(`${adminRoutesNamespace}/users`, checkAdmin, require('../actions/admin/user/list'))
+
     .post(`${adminRoutesNamespace}/user/:userId/grant_admin`, checkAdmin, require('../actions/admin/user/grant-admin'))
     .post(`${adminRoutesNamespace}/user/:userId/revoke_admin`, checkAdmin, require('../actions/admin/user/revoke-admin'))
 
-    .get(`${adminRoutesNamespace}/feature`, checkAdmin, koaBody, require('../actions/admin/features/get'))
-    .get(`${adminRoutesNamespace}/feature/:id`, checkAdmin, koaBody, require('../actions/admin/features/get'))
+    .get(`${adminRoutesNamespace}/feature`, checkAdmin, require('../actions/admin/features/get'))
+    .get(`${adminRoutesNamespace}/feature/:id`, checkAdmin, require('../actions/admin/features/get'))
     .post(`${adminRoutesNamespace}/feature`, checkAdmin, koaBody, require('../actions/admin/features/create'))
     .patch(`${adminRoutesNamespace}/feature/:id`, checkAdmin, koaBody, require('../actions/admin/features/update'))
 
-    .get(`${adminRoutesNamespace}/tariff`, checkAdmin, koaBody, require('../actions/admin/tariffs/get'))
-    .get(`${adminRoutesNamespace}/tariff/:id`, checkAdmin, koaBody, require('../actions/admin/tariffs/get'))
+    .get(`${adminRoutesNamespace}/tariff`, checkAdmin, require('../actions/admin/tariffs/get'))
+    .get(`${adminRoutesNamespace}/tariff/:id`, checkAdmin, require('../actions/admin/tariffs/get'))
     .post(`${adminRoutesNamespace}/tariff`, checkAdmin, koaBody, require('../actions/admin/tariffs/create'))
     .patch(`${adminRoutesNamespace}/tariff/:id`, checkAdmin, koaBody, require('../actions/admin/tariffs/update'))
     .post(`${adminRoutesNamespace}/tariff/:id/default`, checkAdmin, koaBody, require('../actions/admin/tariffs/set-as-default'))
 
     .get(`${adminRoutesNamespace}/accounting/public`, checkAdmin, require('../actions/admin/accounting/public'))
     .get(`${adminRoutesNamespace}/accounting/public/:userId`, checkAdmin, require('../actions/admin/accounting/public'))
+
+    .get(`${adminRoutesNamespace}/landings`, checkAdmin, require('../actions/admin/landings/list'))
 
     .get(`${adminRoutesNamespace}/accounting/internal`, checkAdmin, require('../actions/admin/accounting/internal'))
     .get(`${adminRoutesNamespace}/accounting/internal/:userId`, checkAdmin, require('../actions/admin/accounting/internal'))
