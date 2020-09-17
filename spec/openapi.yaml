@@ -3045,9 +3045,7 @@ paths:
                   type: "number"
                   example: 1
                 features:
-                  type: "array"
-                  items:
-                    type: "string"
+                  type: "object"
                 name:
                   type: "string"
                   example: "Free"
@@ -4193,7 +4191,7 @@ components:
           example: "2020-09-05T20:00:55.252Z"
         dayPrice:
           type: "number"
-          example: 1
+          example: 0
         features:
           type: "array"
           items:
