@@ -5,10 +5,11 @@ const isAsciiEmail = require('sane-email-validation').isAsciiEmail
 const {SIGNUP_NAME_IS_REQUIRED, SIGNUP_INVALID_EMAIL, SIGNUP_EMAIL_CANNOT_BE_USED, SIGNUP_WEAK_PASSWORD,
     SIGNUP_CANT_CREATE_USER } = require('../../../config/errors');
 
-const checkPasswordStrength = require('../../utils/password').checkPasswordStrength;
+const checkPasswordStrength = require('../../../common/utils/password').checkPasswordStrength;
 
-const {REGISTRATION_SOURCE_LOCAL} = require('../../classes/user.class');
-const Factory = require('../../classes/factory');
+const {REGISTRATION_SOURCE_LOCAL} = require('../../../common/classes/user.class');
+const {TariffsList} = require('../../../common/classes/tariffs-list.class');
+const Factory = require('../../../common/classes/factory');
 
 module.exports = async (ctx, next) => {
     try {
@@ -38,6 +39,12 @@ module.exports = async (ctx, next) => {
 
         if (!createdUser) {
             return ctx.throw(500, SIGNUP_CANT_CREATE_USER);
+        }
+
+        const tariffsList = new TariffsList(ctx);
+        const defaultTariff = tariffsList.GetDefault();
+        if (defaultTariff) {
+            await user.SetTariff(defaultTariff._id);
         }
 
         const us = Factory.UserSession(ctx);

@@ -5,7 +5,7 @@ const _ = require('lodash');
 const {AUTHENTICATION_ERROR} = require('../../../../config/errors');
 const config = require('../../../../config/config');
 const getDefaultLanding = require('./default-landing');
-const getDbCollection = require('../../../utils/get-db-collection');
+const getDbCollection = require('../../../../common/utils/get-db-collection');
 
 module.exports = async (ctx, omitLandingBody, domain) => {
 
@@ -36,7 +36,16 @@ module.exports = async (ctx, omitLandingBody, domain) => {
     let result = [];
 
     try {
-        result = await collection.find(condition, options).toArray();
+        const r = await ctx.mongoTransaction(
+            collection,
+            'find',
+            [
+                condition,
+                options
+            ]
+        )
+
+        result = await r.toArray();
     } catch (err) {
         throw err
     }

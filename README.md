@@ -22,7 +22,7 @@ PUBLIC_HOST={string} EMAIL_TEMPLATE_RESTORE_PASSWORD_REQUEST={string} MAILCHIMP_
 MAILCHIMP_METADATA_URL={string='https://login.mailchimp.com/oauth2/metadata'} NGINX_CONFIGS_DIR={string='sites_enabled'} 
 LANDINGS_HTML_DIR={string='landings_html'} LANDINGS_PUBLISHING_HOST={string=} ROUTES_PREFIX={string='/api/v1'}
 ACCESS_TOKEN_LIFETIME={string='1'} REFRESH_TOKEN_LIFETIME={string='72'} RESTORE_PASSWORD_LIFETIME={string='15'} CONFIRM_EMAIL_LIFETIME={string='24'}
-SERVER_PORT={string='80'}  node ./index.js`
+SERVER_PORT={string='80'} STRIPE_PUBLISHABLE_KEY={string} STRIPE_SECRET_KEY={string} STRIPE_WEBHOOK_SECRET={string} node ./index.js`
 
 Where:
 
@@ -60,6 +60,12 @@ Notice! Value of * uses by default (disable CORS protection)
 {MONGO_DSN} - DNS for MongoDB connection
 
 {SENTRY_DSN} - public DSN for Sentry
+
+{STRIPE_PUBLISHABLE_KEY} - Publishable (public) key for Stripe payments integration
+
+{STRIPE_SECRET_KEY} - Secret key for Stripe payments integration
+
+{STRIPE_WEBHOOK_SECRET} - Secret key for Stripe webhooks  
 
 *Optional params*
 
@@ -111,7 +117,7 @@ Notice! Value of * uses by default (disable CORS protection)
 
 {MAX_FILE_SIZE} - max per-file size limit for uploads, in bytes, default is 31457280 (30 Mb)
 
-{MAX_TOTAL_FILES_SIZE} - max user quote for file uploads, in bytes, default is 52428800 (50 Mb)
+{ENABLE_TRANSACTIONS} - enable transactions in MongoDB per user requests 
 
 ## Tests
 

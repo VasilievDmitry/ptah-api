@@ -2,12 +2,25 @@
 
 const _ = require('lodash');
 
-const {BAD_REQUEST} = require('../../../config/errors');
+const config = require('../../../config/config');
+const {BAD_REQUEST, FEATURE_NOT_ALLOWED_OR_LIMIT_EXCEEDED} = require('../../../config/errors');
 const getLandingMeta = require('./helpers/get-landing-meta');
 const updateLandingData = require('./helpers/update-landing-data');
-const getDbCollection = require('../../utils/get-db-collection');
+const checkFeature = require('./helpers/check-feature');
+const getDbCollection = require('../../../common/utils/get-db-collection');
+const {BACKEND_FEATURE_CODE_LANDINGS_COUNT} = require('../../../common/classes/feature.class');
 
 module.exports = async (ctx, next) => {
+
+    const user = _.get(ctx, config.userStatePath);
+    if (!user) {
+        return ctx.throw(401, AUTHENTICATION_ERROR);
+    }
+
+    const checkFeatureResult = await checkFeature(ctx, user, BACKEND_FEATURE_CODE_LANDINGS_COUNT);
+    if (!checkFeatureResult) {
+        return ctx.throw(412, FEATURE_NOT_ALLOWED_OR_LIMIT_EXCEEDED);
+    }
 
     const body = ctx.request.body || {};
     const name = (body.name || '').trim();
@@ -31,7 +44,13 @@ module.exports = async (ctx, next) => {
 
     const collection = getDbCollection.landings(ctx);
     try {
-        await collection.insertOne(data);
+        await ctx.mongoTransaction(
+            collection,
+            'insertOne',
+            [
+                data
+            ]
+        )
     } catch (err) {
         throw err
     }

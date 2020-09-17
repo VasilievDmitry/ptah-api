@@ -4,7 +4,7 @@ const urlJoin = require('url-join');
 const passport = require('koa-passport');
 
 const config = require('../../config/config');
-const {REGISTRATION_SOURCE_GOOGLE, REGISTRATION_SOURCE_MAILCHIMP} = require('./../classes/user.class');
+const {REGISTRATION_SOURCE_GOOGLE, REGISTRATION_SOURCE_MAILCHIMP} = require('../../common/classes/user.class');
 
 const getSocialUser = function (req, name, email, accessToken, refreshToken, source) {
     return {

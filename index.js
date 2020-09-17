@@ -1,19 +1,40 @@
 'use strict';
 
-const {database, up} = require('migrate-mongo');
+const argv = require('argv');
 
-// doing db migrations before app start
-database.connect()
-    .then((obj) => {
-        up(obj.db, obj.client)
-            .then((migrated) => {
-                migrated.forEach(fileName => console.log('Migrated:', fileName));
+const logger = require('./common/middleware/logger');
+const app = require('./app/app');
+const billing = require('./billing/billing');
+const migrate = require('./common/utils/migrate');
 
-                require('./app/app');
-            });
-    })
-    .catch((err) => {
-        throw (err);
+const argvOptions = [
+    {
+        name: 'task',
+        type: 'string'
+    }
+];
+
+(async function main() {
+
+    logger.info('~~~ PTAH BACKEND ~~~');
+
+    await migrate.start(logger);
+
+    const args = argv.option(argvOptions).run();
+
+    const task = (args.options.task || '').toLowerCase();
+    if (task === 'billing') {
+        logger.info('starting billing');
+        return await billing.start(logger);
+    }
+
+    logger.info('starting app...');
+    app.start(logger);
+})()
+    .then()
+    .catch(err => {
+        logger.error(err);
+        process.exit(1);
     });
 
 

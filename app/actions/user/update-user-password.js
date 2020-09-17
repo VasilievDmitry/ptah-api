@@ -2,7 +2,7 @@
 
 const {AUTHENTICATION_ERROR, USER_PASSWORD_IS_REQUIRED, USER_WEAK_PASSWORD, OLD_PASSWORD_MISMATCH} = require('../../../config/errors');
 
-const checkPasswordStrength = require('../../utils/password').checkPasswordStrength;
+const checkPasswordStrength = require('../../../common/utils/password').checkPasswordStrength;
 
 module.exports = async (ctx, next) => {
     try {

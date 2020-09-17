@@ -84,14 +84,16 @@ class Mail {
                  if (this.ctx) {
                     return this.ctx.throw(412, PRECONDITION_FAILED)
                  } else {
-                    throw new Error(PRECONDITION_FAILED);
+                     // noinspection ExceptionCaughtLocallyJS
+                     throw new Error(PRECONDITION_FAILED);
                  }
             }
             if (!templateId) {
                  if (this.ctx) {
                     return this.ctx.throw(500, INTERNAL_SERVER_ERROR)
                 } else {
-                    throw new Error(INTERNAL_SERVER_ERROR);
+                     // noinspection ExceptionCaughtLocallyJS
+                     throw new Error(INTERNAL_SERVER_ERROR);
                 }
             }
 

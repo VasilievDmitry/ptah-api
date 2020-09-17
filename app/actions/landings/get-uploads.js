@@ -5,7 +5,7 @@ const urlJoin = require('url-join');
 
 const config = require('../../../config/config');
 const {AUTHENTICATION_ERROR} = require('../../../config/errors');
-const Factory = require('../../classes/factory');
+const Factory = require('../../../common/classes/factory');
 
 module.exports = async (ctx, next) => {
     try {
@@ -15,7 +15,7 @@ module.exports = async (ctx, next) => {
             return ctx.throw(401, AUTHENTICATION_ERROR);
         }
 
-        const userUploads = Factory.UserUploads(ctx);
+        const userUploads = await Factory.UserUploads(ctx);
 
         const uploads = await userUploads.FindAll();
         const totalSize = await userUploads.getUserUploadsSize();

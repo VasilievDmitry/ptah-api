@@ -1,8 +1,8 @@
 'use strict';
 
 const {TOKEN_IS_REQUIRED, NOT_FOUND} = require('../../../config/errors');
-const generatePassword = require('../../utils/password').generatePassword;
-const Factory = require('../../classes/factory');
+const generatePassword = require('../../../common/utils/password').generatePassword;
+const Factory = require('../../../common/classes/factory');
 
 module.exports = async (ctx, next) => {
     try {

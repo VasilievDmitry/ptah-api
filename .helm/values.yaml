@@ -65,7 +65,10 @@ backend:
     - CDN_HOST
     - CDN_PATH
     - MAX_FILE_SIZE
-    - MAX_TOTAL_FILES_SIZE
+    - ENABLE_TRANSACTIONS
+    - STRIPE_PUBLISHABLE_KEY
+    - STRIPE_SECRET_KEY
+    - STRIPE_WEBHOOK_SECRET
 
 frontend:
   name: nginx

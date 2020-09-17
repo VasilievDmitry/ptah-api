@@ -4,12 +4,12 @@ const _ = require('lodash');
 
 const config = require('../../config/config');
 
-const getDbCollection = require('./../utils/get-db-collection');
-
 const {Mail} = require('./mail.class');
 const {User} = require('./user.class');
 const {UserSession} = require('./user-session.class');
 const {UserUploads} = require('./user-uploads.class');
+const {TariffsList} = require('./tariffs-list.class')
+const {BACKEND_FEATURE_CODE_UPLOADS_QUOTE} = require('./feature.class')
 
 module.exports = {
 
@@ -31,9 +31,9 @@ module.exports = {
         return new Mail(ctx, params, templates);
     },
 
-    User: function (ctx, collection) {
-        if (!ctx && !collection) {
-            throw new Error('no collection and no ctx')
+    User: function (ctx, user) {
+        if (!ctx) {
+            throw new Error('no ctx')
         }
 
         const params = {
@@ -44,20 +44,12 @@ module.exports = {
             confirmEmailLifetime: config.confirmEmailLifetime,
         }
 
-        if (ctx && !collection) {
-            collection = getDbCollection.users(ctx)
-        }
-
-        return new User(ctx, collection, params);
+        return new User(ctx, params, user);
     },
 
-    UserSession: function(ctx, collection) {
-        if (!ctx && !collection) {
-            throw new Error('no collection and no ctx')
-        }
-
-        if (ctx && !collection) {
-            collection = getDbCollection.users_sessions(ctx)
+    UserSession: function(ctx) {
+        if (!ctx) {
+            throw new Error('no ctx')
         }
 
         const params = {
@@ -68,25 +60,35 @@ module.exports = {
             authCheckIP: config.authCheckIP,
         }
 
-        return new UserSession(ctx, collection, params);
+        return new UserSession(ctx, params);
     },
 
-    UserUploads: function(ctx, params, collection) {
-        if (!ctx && !collection) {
-            throw new Error('no collection and no ctx')
+    UserUploads: async function(ctx, params) {
+        if (!ctx) {
+            throw new Error('no ctx')
         }
 
-        if (ctx && !collection) {
-            collection = getDbCollection.users_uploads(ctx)
+        const user = params.user || _.get(ctx, config.userStatePath);
+
+        let maxTotalFilesSize = -1;
+
+        const tariffsList = new TariffsList(ctx);
+        const tariff = await tariffsList.GetById(user.tariff);
+
+        if (tariff) {
+            const feature = tariff.features.find(f => f.feature.code === BACKEND_FEATURE_CODE_UPLOADS_QUOTE);
+            if (feature) {
+                maxTotalFilesSize = feature.volume * 1024 * 1024;
+            }
         }
 
         params = Object.assign({}, {
-            userId: _.get(ctx, config.userIdStatePath, ''),
+            userId: user.GetId ? user.GetId() : user._id.toString(),
             maxFileSize: config.maxFileSize,
-            maxTotalFilesSize: config.maxTotalFilesSize,
+            maxTotalFilesSize: maxTotalFilesSize,
         }, params || {});
 
 
-        return new UserUploads(ctx, collection, params);
+        return new UserUploads(ctx, params);
     }
 };

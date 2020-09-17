@@ -25,4 +25,12 @@ module.exports = {
     FILE_SIZE_LIMIT_EXCEEDED: 'file_size_limit_exceeded',
     FILE_SIZE_QUOTE_EXCEEDED: 'file_size_quote_exceeded',
     FILE_ALREADY_UPLOADED: 'file_already_uploaded',
+    FEATURE_NAME_EMPTY: 'feature_name_empty',
+    FEATURE_CODE_EMPTY: 'feature_code_empty',
+    FEATURE_CODE_ALREADY_EXISTS: 'feature_code_already_exists',
+    FEATURE_ALREADY_IN_USE: 'feature_already_in_use',
+    FEATURE_NOT_FOUND_OR_ARCHIVED: 'feature_not_found_or_archived',
+    FEATURE_NOT_ALLOWED_OR_LIMIT_EXCEEDED: 'feature_not_allowed_or_limit_exceeded',
+    TARIFF_PRICE_TOO_MUCH_FOR_DEFAULT: 'tariff_price_too_much_for_default',
+    NOT_ENOUGH_MONEY: 'not_enough_money',
 };

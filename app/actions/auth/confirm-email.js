@@ -1,7 +1,7 @@
 'use strict';
 
 const {TOKEN_IS_REQUIRED, NOT_FOUND} = require('../../../config/errors');
-const Factory = require('../../classes/factory');
+const Factory = require('../../../common/classes/factory');
 
 module.exports = async (ctx, next) => {
     try {

@@ -7,7 +7,7 @@ const {BAD_REQUEST, PRECONDITION_FAILED} = require('../../../config/errors');
 const findLandings = require('./helpers/find-landings');
 const getLandingMeta = require('./helpers/get-landing-meta');
 const updateLandingData = require('./helpers/update-landing-data');
-const getDbCollection = require('../../utils/get-db-collection');
+const getDbCollection = require('../../../common/utils/get-db-collection');
 
 module.exports = async (ctx, next) => {
     const id = ctx.params.id;
@@ -48,7 +48,14 @@ module.exports = async (ctx, next) => {
 
             const collection = getDbCollection.landings(ctx);
 
-            await collection.updateOne({_id: ObjectID(id)}, {$set: data});
+            await ctx.mongoTransaction(
+                collection,
+                'updateOne',
+                [
+                    {_id: ObjectID(id)},
+                    {$set: data}
+                ]
+            )
         }
     } catch (err) {
         throw err

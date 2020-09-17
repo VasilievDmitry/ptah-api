@@ -5,7 +5,7 @@ const path = require('path');
 
 const config = require('../../../../config/config');
 
-const rmRf = require('../../../utils/rm-rf');
+const rmRf = require('../../../../common/utils/rm-rf');
 
 module.exports = async (id) => {
 

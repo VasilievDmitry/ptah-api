@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-const envUtils = require('../app/utils/env');
+const envUtils = require('../common/utils/env');
 const getEnvVariable = envUtils.getEnvVariable;
 const getEnvVariableArray = envUtils.getEnvVariableArray;
 
@@ -20,16 +20,26 @@ const config = {
 
     dbLandingsCollectionName: 'ptah-landings',
     dbUsersCollectionName: 'ptah-users',
+    dbUsersHistoryCollectionName: 'ptah-users-history',
     dbUsersSessionsCollectionName: 'ptah-users-sessions',
     dbUsersUploadsCollectionName: 'ptah-users-uploads',
+    dbUsersFeaturesCollectionName: 'ptah-features',
+    dbUsersTariffsCollectionName: 'ptah-tariffs',
+    dbUsersTariffsHistoryCollectionName: 'ptah-tariffs-history',
+    dbAccountingUsersCollectionName: 'ptah-accounting-users',
+    dbAccountingInternalCollectionName: 'ptah-accounting-internal',
+    dbUserPaymentDataCollectionName: 'ptah-user-payment-data',
 
     routesPrefix: getEnvVariable('ROUTES_PREFIX', '/api/v1'),
 
+    adminRoutesNamespace: '/admin',
     authRoutesNamespace: '/auth',
     landingsRoutesNamespace: '/landings',
     mailchimpRoutesNamespace: '/mailchimp',
     userRoutesNamespace: '/user',
     uploadRoutesNamespace: '/upload',
+    tariffsRoutesNamespace: '/tariffs',
+    webhooksRoutesNamespace: '/webhooks',
 
     landingsHtmlDir: path.resolve(landingsHtmlDir),
     nginxConfigsDir: path.resolve(nginxConfigsDir),
@@ -82,6 +92,8 @@ const config = {
     cdnHost: getEnvVariable('CDN_HOST', ''),
     cdnPath: getEnvVariable('CDN_PATH', ''),
 
+    pagingDefaultLimit: 100,
+
     passwordRequirements: {
         length: 8,
         lowercase: false,
@@ -92,7 +104,13 @@ const config = {
 
     maxFileSize: +getEnvVariable('MAX_FILE_SIZE', 30 * 1024 * 1024),
 
-    maxTotalFilesSize: +getEnvVariable('MAX_TOTAL_FILES_SIZE', 50 * 1024 * 1024),
+    enableTransactions: (getEnvVariable('ENABLE_TRANSACTIONS', '') || '').toLowerCase() === 'true',
+
+    stripeSecretKey: getEnvVariable('STRIPE_SECRET_KEY', ''),
+    stripePublishableKey: getEnvVariable('STRIPE_PUBLISHABLE_KEY', ''),
+    stripeWebhookSecret: getEnvVariable('STRIPE_WEBHOOK_SECRET', ''),
+
+
 
 };
 

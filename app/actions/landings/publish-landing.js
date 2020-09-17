@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const _ = require('lodash');
 const path = require('path');
 const decompress = require('decompress');
 const ObjectID = require("bson-objectid");
@@ -13,11 +14,18 @@ const getLandingMeta = require('./helpers/get-landing-meta');
 const updateLandingData = require('./helpers/update-landing-data');
 const deletePublishedLanding = require('./helpers/delete-published-landing');
 const addDomainConfig = require('./helpers/add-domain-config');
-const getDbCollection = require('../../utils/get-db-collection');
+const getDbCollection = require('../../../common/utils/get-db-collection');
+const checkFeature = require('./helpers/check-feature');
+const {BACKEND_FEATURE_CODE_OWN_DOMAIN} = require('../../../common/classes/feature.class');
 
 
 module.exports = async (ctx, next) => {
     const id = ctx.params.id;
+
+    const user = _.get(ctx, config.userStatePath);
+    if (!user) {
+        return ctx.throw(401, AUTHENTICATION_ERROR);
+    }
 
     if (!ctx.request.files) {
         return ctx.throw(400, BAD_REQUEST);
@@ -39,6 +47,11 @@ module.exports = async (ctx, next) => {
 
             if (!landing.domain) {
                 return ctx.throw(412, PRECONDITION_FAILED);
+            }
+
+            const checkFeatureResult = await checkFeature(ctx, user, BACKEND_FEATURE_CODE_OWN_DOMAIN, landing);
+            if (!checkFeatureResult) {
+                return ctx.throw(412, FEATURE_NOT_ALLOWED_OR_LIMIT_EXCEEDED);
             }
 
             // remove previous published landing (and external domain config too), if exists
@@ -63,7 +76,14 @@ module.exports = async (ctx, next) => {
 
             const collection = getDbCollection.landings(ctx);
 
-            await collection.updateOne({_id: ObjectID(id)}, {$set: data});
+            await ctx.mongoTransaction(
+                collection,
+                'updateOne',
+                [
+                    {_id: ObjectID(id)},
+                    {$set: data}
+                ]
+            )
         }
     } catch (err) {
         throw err

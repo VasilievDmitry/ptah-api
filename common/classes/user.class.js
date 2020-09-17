@@ -5,6 +5,10 @@ const jwt = require('jsonwebtoken');
 const ObjectID = require('bson-objectid');
 const {Crypt, Compare} = require('password-crypt');
 
+const config = require('../../config/config')
+const getDbCollection = require('../utils/get-db-collection');
+const subscriptionStates = require('./subscription-state');
+
 const REGISTRATION_SOURCE_LOCAL = 'local';
 const REGISTRATION_SOURCE_GOOGLE = 'google';
 const REGISTRATION_SOURCE_MAILCHIMP = 'mailchimp';
@@ -23,7 +27,15 @@ function getDefaultUser() {
         registrationSource: '',
         createDate: now,
         updateDate: now,
-        isDeleted: false
+        isAdmin: false,
+        tariff: null,
+        subscriptionState: subscriptionStates.inactive,
+        stripeCustomerId: null,
+        stripePaymentMethodId: null,
+        cardBrand: '',
+        cardLast4: '',
+        isDeleted: false,
+        lastBillingDate: null,
     }
 }
 
@@ -32,7 +44,7 @@ class User {
     omitFields = [];
 
     publicFields = ['_id', 'name', 'email', 'emailConfirmed', 'mailchimpIntegration',
-        'registrationSource', 'createDate', 'updateDate'];
+        'registrationSource', 'createDate', 'updateDate', 'tariff', 'subscriptionState', 'cardBrand', 'cardLast4'];
 
 
     /*
@@ -42,16 +54,19 @@ class User {
     params.confirmEmailSecret
     params.confirmEmailLifetime (seconds)
      */
-    constructor(ctx, collection, params) {
+    constructor(ctx, params, user) {
         params = params || {};
         if (Object.values(params).filter(Boolean).length < 5) {
             throw new Error("not enough params to init user");
         }
 
         this.ctx = ctx;
-        this.collection = collection;
+        this.collection = getDbCollection.users(ctx);
+        this.collectionHistory = getDbCollection.usersHistory(ctx);
         this.params = params;
-        this.user = getDefaultUser();
+
+        user = user || {}
+        this.user = Object.assign({}, getDefaultUser(), user);
         return this;
     }
 
@@ -60,6 +75,11 @@ class User {
             return null;
         }
         const condition = {_id: ObjectID(id)}
+        return await this.find(condition);
+    }
+
+    async FindByStripeCustomerId(stripeCustomerId) {
+        const condition = {stripeCustomerId: stripeCustomerId}
         return await this.find(condition);
     }
 
@@ -72,8 +92,67 @@ class User {
         return this.user._id.toString();
     }
 
+    GetStripeCustomerId() {
+        return this.user.stripeCustomerId;
+    }
+
+    GetTariffId() {
+        return this.user.tariff;
+    }
+
+    async SetStripeCustomerId(stripeCustomerId) {
+        try {
+            return await this.updateUser({
+                stripeCustomerId: stripeCustomerId,
+            });
+        } catch (e) {
+            throw e
+        }
+    }
+
+    GetStripePaymentMethodId() {
+        return this.user.stripePaymentMethodId;
+    }
+
+    async SetStripePaymentMethodId(stripePaymentMethodId) {
+        try {
+            return await this.updateUser({
+                stripePaymentMethodId: stripePaymentMethodId,
+            });
+        } catch (e) {
+            throw e
+        }
+    }
+
+    async SetStripeCardData(brand, last4) {
+        try {
+            return await this.updateUser({
+                cardBrand: brand || null,
+                cardLast4: last4 || null,
+            });
+        } catch (e) {
+            throw e
+        }
+    }
+
+    async DeleteStripePaymentMethod() {
+        try {
+            return await this.updateUser({
+                stripePaymentMethodId: null,
+                cardBrand: null,
+                cardLast4: null,
+            });
+        } catch (e) {
+            throw e
+        }
+    }
+
     GetUser() {
         return _.pick(this.user, this.publicFields);
+    }
+
+    GetIsAdmin() {
+        return !!this.user.isAdmin;
     }
 
     async CreateUser(name, email, password, registrationSource) {
@@ -166,6 +245,66 @@ class User {
         }
     }
 
+    async GrantAdmin() {
+        try {
+            return await this.updateUser({
+                isAdmin: true,
+            });
+        } catch (e) {
+            throw e
+        }
+    }
+
+    async RevokeAdmin() {
+        try {
+            return await this.updateUser({
+                isAdmin: false,
+            });
+        } catch (e) {
+            throw e
+        }
+    }
+
+    async SetTariff(tariffId) {
+        tariffId = tariffId || null;
+        if (!tariffId) {
+            return null;
+        }
+        try {
+            return await this.updateUser({
+                tariff: tariffId,
+            });
+        } catch (e) {
+            throw e
+        }
+    }
+
+    async SetSubscriptionState(state) {
+        state = state || null;
+        if (Object.values(subscriptionStates).indexOf(state) < 0) {
+            return null;
+        }
+        try {
+            return await this.updateUser({
+                subscriptionState: state,
+            });
+        } catch (e) {
+            throw e
+        }
+    }
+
+    async SetLastBillingDate(date) {
+        date = date || new Date();
+
+        try {
+            return await this.updateUser({
+                lastBillingDate: date
+            });
+        } catch (e) {
+            throw e
+        }
+    }
+
     GetMailchimpIntegrationToken() {
         if (!this.user.mailchimpIntegration) {
             return '';
@@ -235,7 +374,14 @@ class User {
         const query = Object.assign({}, conditions, defaultConditions)
 
         try {
-            const result = await this.collection.findOne(query, options);
+            const result = await this.ctx.mongoTransaction(
+                this.collection,
+                'findOne',
+                [
+                    query,
+                    options
+                ]
+            )
 
             if (!result) {
                 return null;
@@ -245,7 +391,7 @@ class User {
 
             return this.fillUser(Object.assign({}, getDefaultUser(), result));
 
-        } catch (err) {
+        } catch (e) {
             throw e
         }
     }
@@ -259,7 +405,29 @@ class User {
         try {
             userObject.updateDate = (new Date).toISOString();
             delete userObject._id;
-            await this.collection.updateOne({_id: this.user._id}, {$set: userObject}, { upsert: true });
+
+            await this.ctx.mongoTransaction(
+                this.collection,
+                'updateOne',
+                [
+                    {_id: this.user._id},
+                    {$set: userObject},
+                    {upsert: true}
+                ]
+            )
+
+            const currentUserId = _.get(this.ctx, config.userIdStatePath);
+            const historyObject = Object.assign({}, this.user, {userId: this.user._id, currentUserId: currentUserId});
+            delete historyObject._id;
+
+            await this.ctx.mongoTransaction(
+                this.collectionHistory,
+                'insertOne',
+                [
+                    historyObject
+                ]
+            )
+
             return this.fillUser(userObject);
         } catch (e) {
             throw e

@@ -4,6 +4,8 @@ const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const ObjectID = require('bson-objectid');
 
+const getDbCollection = require('../utils/get-db-collection');
+
 function getDefaultUserSession() {
     const now = (new Date).toISOString();
     return {
@@ -31,7 +33,7 @@ class UserSession {
      * params.authCheckUserAgent
      * params.authCheckIP
      */
-    constructor(ctx, collection, params) {
+    constructor(ctx, params) {
         params = params || {}
         params.authCheckUserAgent = !!params.authCheckUserAgent;
         params.authCheckIP = !!params.authCheckIP;
@@ -41,7 +43,7 @@ class UserSession {
         }
 
         this.ctx = ctx;
-        this.collection = collection;
+        this.collection = getDbCollection.usersSessions(ctx);
         this.params = params;
         this.session = getDefaultUserSession();
         return this;
@@ -116,7 +118,14 @@ class UserSession {
                 updatedAt: (new Date).toISOString()
             }
 
-            await this.collection.updateMany(filter, {$set: update});
+            await this.ctx.mongoTransaction(
+                this.collection,
+                'updateMany',
+                [
+                    filter,
+                    {$set: update}
+                ]
+            )
 
         } catch (err) {
             throw err
@@ -210,7 +219,14 @@ class UserSession {
         const query = Object.assign({}, conditions, defaultConditions)
 
         try {
-            const result = await this.collection.findOne(query, options);
+            const result = await this.ctx.mongoTransaction(
+                this.collection,
+                'findOne',
+                [
+                    query,
+                    options
+                ]
+            )
 
             if (!result) {
                 return null;
@@ -232,7 +248,17 @@ class UserSession {
         try {
             sessionObject.updatedAt = (new Date).toISOString();
             delete sessionObject._id;
-            await this.collection.updateOne({_id: this.session._id}, {$set: sessionObject}, {upsert: true})
+
+            await this.ctx.mongoTransaction(
+                this.collection,
+                'updateOne',
+                [
+                    {_id: this.session._id},
+                    {$set: sessionObject},
+                    {upsert: true}
+                ]
+            )
+
             return this.fillSession(sessionObject);
         } catch (e) {
             throw e

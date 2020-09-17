@@ -2,7 +2,7 @@
 
 const {LOGIN_EMAIL_AND_PASSWORD_REQUIRED, FORBIDDEN, CANT_CREATE_SESSION} = require('../../../config/errors');
 
-const Factory = require('../../classes/factory');
+const Factory = require('../../../common/classes/factory');
 
 module.exports = async (ctx, next) => {
     try {

@@ -10,7 +10,7 @@ const ObjectID = require("bson-objectid");
 chai.use(chaiHttp);
 chai.use(chaiValidateResponse.default);
 
-const server = require('../../app/app');
+const server = require('../server');
 const config = require('../../config/config');
 const fakes = require('../fakes/fakes');
 

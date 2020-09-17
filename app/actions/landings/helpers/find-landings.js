@@ -6,7 +6,7 @@ const ObjectID = require("bson-objectid");
 const {AUTHENTICATION_ERROR, BAD_REQUEST, NOT_FOUND} = require('../../../../config/errors');
 const config = require('../../../../config/config');
 const getDefaultLanding = require('./default-landing');
-const getDbCollection = require('../../../utils/get-db-collection');
+const getDbCollection = require('../../../../common/utils/get-db-collection');
 
 module.exports = async (ctx, omitLandingBody, ids) => {
 
@@ -50,7 +50,17 @@ module.exports = async (ctx, omitLandingBody, ids) => {
     let result = [];
 
     try {
-        result = await collection.find(condition, options).toArray();
+        const r = await ctx.mongoTransaction(
+            collection,
+            'find',
+            [
+                condition,
+                options
+            ]
+        )
+
+        result = await r.toArray();
+
         if (hasConditionById && !result.length) {
             return ctx.throw(404, NOT_FOUND)
         }

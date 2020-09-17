@@ -3,6 +3,8 @@
 const _ = require('lodash');
 const ObjectID = require('bson-objectid');
 
+const getDbCollection = require('../utils/get-db-collection');
+
 function getDefaultUserUpload() {
     return {
         _id: ObjectID(),
@@ -64,7 +66,7 @@ class UserUploads {
      * params.maxFileSize
      * params.maxTotalFilesSize
      */
-    constructor(ctx, collection, params) {
+    constructor(ctx, params) {
         this.params = Object.assign({
             userId: '',
             maxFileSize: 0,
@@ -76,12 +78,12 @@ class UserUploads {
             throw new Error("not enough params to init user upload");
         }
 
-        if (this.params.maxFileSize > this.params.maxTotalFilesSize) {
+        /*if (this.params.maxFileSize > this.params.maxTotalFilesSize) {
             throw new Error(` invalid params to init user upload: params.maxFileSize (${params.maxFileSize}) must be gte params.maxTotalFilesSize ${params.maxTotalFilesSize}`);
-        }
+        }*/
 
         this.ctx = ctx;
-        this.collection = collection;
+        this.collection = getDbCollection.usersUploads(this.ctx);
 
         this.projection = {}
         Object.keys(getDefaultUserUpload()).forEach(k => {
@@ -152,7 +154,16 @@ class UserUploads {
 
         const options = {};
 
-        const result = await this.collection.aggregate(pipeline, options).toArray();
+        const r = await this.ctx.mongoTransaction(
+            this.collection,
+            'aggregate',
+            [
+                pipeline,
+                options
+            ]
+        )
+
+        const result = await r.toArray();
 
         if (!result || !result.length) {
             return 0
@@ -172,7 +183,16 @@ class UserUploads {
         const query = Object.assign({}, conditions, defaultConditions)
 
         try {
-            const result = await this.collection.find(query, options).toArray();
+            const r = await this.ctx.mongoTransaction(
+                this.collection,
+                'find',
+                [
+                    query,
+                    options
+                ]
+            )
+
+            const result = await r.toArray();
 
             if (!result) {
                 return [];
@@ -187,8 +207,13 @@ class UserUploads {
 
     async createUserUpload(uploadObject) {
         try {
-            const r = await this.collection.insertOne(uploadObject);
-            console.log(r);
+            await this.ctx.mongoTransaction(
+                this.collection,
+                'insertOne',
+                [
+                    uploadObject
+                ]
+            )
         } catch (e) {
             throw e
         }

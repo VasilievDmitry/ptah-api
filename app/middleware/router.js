@@ -7,10 +7,11 @@ const passport = require('koa-passport');
 
 const config = require('../../config/config');
 const {AUTHENTICATION_ERROR, CANT_CREATE_SESSION, INTERNAL_SERVER_ERROR, SIGNUP_CANT_CREATE_USER} = require('../../config/errors');
-const Factory = require('../classes/factory');
-const {REGISTRATION_SOURCE_MAILCHIMP} = require('./../classes/user.class');
-const generatePassword = require('../utils/password').generatePassword;
-
+const Factory = require('../../common/classes/factory');
+const {TariffsList} = require('../../common/classes/tariffs-list.class');
+const {REGISTRATION_SOURCE_MAILCHIMP} = require('../../common/classes/user.class');
+const generatePassword = require('../../common/utils/password').generatePassword;
+const checkAdmin = require('./check-admin');
 
 const preventRedirect = async function (ctx, next, scope, skipAuthCheck) {
 
@@ -56,6 +57,12 @@ const createSession = async function (ctx, next) {
                 return ctx.throw(500, SIGNUP_CANT_CREATE_USER)
             }
 
+            const tariffsList = new TariffsList(ctx);
+            const defaultTariff = tariffsList.GetDefault();
+            if (defaultTariff) {
+                await user.SetTariff(defaultTariff._id);
+            }
+
             try {
                 const mail = Factory.Mail(ctx);
                 await mail.SendUserSignupSocial(user.GetUser(), password);
@@ -89,14 +96,18 @@ const router = new Router({
     prefix: config.routesPrefix
 });
 const koaBody = convert(KoaBody({
+    includeUnparsed: true,
     multipart: true
 }));
 
+const adminRoutesNamespace = config.adminRoutesNamespace;
 const authRoutesNamespace = config.authRoutesNamespace;
 const landingsRoutesNamespace = config.landingsRoutesNamespace;
 const mailchimpRoutesNamespace = config.mailchimpRoutesNamespace;
 const userRoutesNamespace = config.userRoutesNamespace;
 const uploadRoutesNamespace = config.uploadRoutesNamespace;
+const tariffsRoutesNamespace = config.tariffsRoutesNamespace;
+const webhooksRoutesNamespace = config.webhooksRoutesNamespace;
 
 router
     .get('/_healthz', async(ctx, next) => {
@@ -137,6 +148,14 @@ router
     .delete(`${userRoutesNamespace}/mailchimp`, require('../actions/user/disable-user-mailchimp-intergration'))
     .get(`${userRoutesNamespace}/send_email_confirmation`, require('../actions/user/send-email-confirmation'))
     .get(`${userRoutesNamespace}/uploads`, require('../actions/landings/get-uploads'))
+    .get(`${userRoutesNamespace}/tariff`, require('../actions/user/get-user-tariff'))
+    .post(`${userRoutesNamespace}/prepare-payment`, koaBody, require('../actions/user/prepare-payment'))
+    .delete(`${userRoutesNamespace}/card`, require('../actions/user/remove-card'))
+    .post(`${userRoutesNamespace}/set-tariff`, koaBody, require('../actions/user/set-tariff'))
+    .get(`${userRoutesNamespace}/payments-history`, require('../actions/user/get-payments-history'))
+    .get(`${userRoutesNamespace}/balance`, require('../actions/user/get-balance'))
+
+    .get(`${tariffsRoutesNamespace}/`, require('../actions/tariffs/get'))
 
     // Mailchimp authentication route
     .get(`${mailchimpRoutesNamespace}/login`,
@@ -166,6 +185,29 @@ router
     .get(`${mailchimpRoutesNamespace}/maillists`, require('../actions/mailchimp/get-maillists'))
 
     .post(`${uploadRoutesNamespace}/`, koaBody, require('../actions/uploads/s3'))
+
+    .post(`${adminRoutesNamespace}/user/:userId/grant_admin`, checkAdmin, require('../actions/admin/user/grant-admin'))
+    .post(`${adminRoutesNamespace}/user/:userId/revoke_admin`, checkAdmin, require('../actions/admin/user/revoke-admin'))
+
+    .get(`${adminRoutesNamespace}/feature`, checkAdmin, koaBody, require('../actions/admin/features/get'))
+    .get(`${adminRoutesNamespace}/feature/:id`, checkAdmin, koaBody, require('../actions/admin/features/get'))
+    .post(`${adminRoutesNamespace}/feature`, checkAdmin, koaBody, require('../actions/admin/features/create'))
+    .patch(`${adminRoutesNamespace}/feature/:id`, checkAdmin, koaBody, require('../actions/admin/features/update'))
+
+    .get(`${adminRoutesNamespace}/tariff`, checkAdmin, koaBody, require('../actions/admin/tariffs/get'))
+    .get(`${adminRoutesNamespace}/tariff/:id`, checkAdmin, koaBody, require('../actions/admin/tariffs/get'))
+    .post(`${adminRoutesNamespace}/tariff`, checkAdmin, koaBody, require('../actions/admin/tariffs/create'))
+    .patch(`${adminRoutesNamespace}/tariff/:id`, checkAdmin, koaBody, require('../actions/admin/tariffs/update'))
+    .post(`${adminRoutesNamespace}/tariff/:id/default`, checkAdmin, koaBody, require('../actions/admin/tariffs/set-as-default'))
+
+    .get(`${adminRoutesNamespace}/accounting/public`, checkAdmin, require('../actions/admin/accounting/public'))
+    .get(`${adminRoutesNamespace}/accounting/public/:userId`, checkAdmin, require('../actions/admin/accounting/public'))
+
+    .get(`${adminRoutesNamespace}/accounting/internal`, checkAdmin, require('../actions/admin/accounting/internal'))
+    .get(`${adminRoutesNamespace}/accounting/internal/:userId`, checkAdmin, require('../actions/admin/accounting/internal'))
+
+    .post(`${webhooksRoutesNamespace}/stripe`, koaBody, require('../actions/webhooks/stripe'))
+
 ;
 
 

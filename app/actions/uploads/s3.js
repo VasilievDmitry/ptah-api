@@ -4,12 +4,12 @@ const aws = require('aws-sdk');
 const urlJoin = require('url-join');
 const md5File = require('md5-file');
 
-const Factory = require('../../classes/factory');
+const Factory = require('../../../common/classes/factory');
 const config = require('../../../config/config');
 
 const {AUTHENTICATION_ERROR, BAD_REQUEST, FILE_TYPE_DISALLOWED, FILE_SIZE_LIMIT_EXCEEDED, FILE_SIZE_QUOTE_EXCEEDED, FILE_ALREADY_UPLOADED} = require('../../../config/errors');
 
-module.exports = async (ctx, next) => {
+module.exports = async (ctx) => {
     try {
         const user = ctx.user.User;
         if (!user) {
@@ -21,7 +21,7 @@ module.exports = async (ctx, next) => {
             return ctx.throw(400, BAD_REQUEST);
         }
 
-        const userUploads = Factory.UserUploads(ctx);
+        const userUploads = await Factory.UserUploads(ctx);
 
         const fileType = userUploads.GetFileType(file.type);
         if (!fileType) {
@@ -102,7 +102,7 @@ const uploadFile = function (file, fileType, userId, config) {
 }
 
 const getFileHash = async function(ctx, filepath) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         md5File(filepath).then((hash) => {
             return resolve(hash);
         }).catch((e) => {

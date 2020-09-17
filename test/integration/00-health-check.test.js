@@ -11,7 +11,7 @@ chai.use(chaiValidateResponse.default);
 
 const mockserver = require('../fakes/external-servers-mockup');
 
-const server = require('../../app/app');
+const server = require('../server');
 const config = require('../../config/config');
 
 const routesPrefix = config.routesPrefix;
@@ -37,3 +37,5 @@ describe(`GET ${routesPrefix}/_healthz`, () => {
     });
 
 });
+
+

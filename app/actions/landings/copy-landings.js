@@ -3,7 +3,7 @@
 const {BAD_REQUEST} = require('../../../config/errors');
 const findLandings = require('./helpers/find-landings');
 const updateLandingData = require('./helpers/update-landing-data');
-const getDbCollection = require('../../utils/get-db-collection');
+const getDbCollection = require('../../../common/utils/get-db-collection');
 
 module.exports = async (ctx, next) => {
     const body = ctx.request.body || {};
@@ -28,7 +28,13 @@ module.exports = async (ctx, next) => {
         });
         const collection = getDbCollection.landings(ctx);
 
-        await collection.insertMany(newLandings);
+        await ctx.mongoTransaction(
+            collection,
+            'insertMany',
+            [
+                newLandings
+            ]
+        )
 
     } catch (err) {
         throw err

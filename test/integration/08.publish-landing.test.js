@@ -11,7 +11,7 @@ chai.use(chaiValidateResponse.default);
 
 const should = chai.should();
 
-const server = require('../../app/app');
+const server = require('../server');
 const config = require('../../config/config');
 const fakes = require('../fakes/fakes');
 

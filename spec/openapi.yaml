@@ -6,7 +6,7 @@ servers:
 
 info:
   description: This is an API for PTAH to manage landing pages
-  version: "1.2.0"
+  version: "1.4.0"
   title: PTAH Backend API
   termsOfService: ''
   contact:
@@ -27,6 +27,12 @@ tags:
     description: Intergation with mailchimp
   - name: Upload
     description: Files upload
+  - name: Admin
+    description: Admin area
+  - name: Tariff
+    description: Tariffs info
+  - name: Webhooks
+    description: Public endpoints to receive webhooks
 
 paths:
   /api/v1/landings:
@@ -2140,6 +2146,1290 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorUnathorized'
 
+  /api/v1/user/tariff:
+    get:
+      tags:
+        - User
+      summary: User tariff
+      operationId: userTariff
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User tariff data
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tariff'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/user/set-tariff:
+    post:
+      tags:
+        - User
+      summary: Set user tariff
+      operationId: userSetTariff
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User tariff data
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+      requestBody:
+        description: Tariff id to set
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: '5f516e495410f830589eb078'
+
+  /api/v1/user/payments-history:
+    get:
+      tags:
+        - User
+      summary: User payments history
+      operationId: userPaymentsHistory
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: number
+            example: 100
+        - name: offset
+          in: query
+          schema:
+            type: number
+            example: 0
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User payments history
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountingEntriesList'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/user/balance:
+    get:
+      tags:
+        - User
+      summary: User balance
+      operationId: userBalance
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User balance
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userBalance'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/user/prepare-payment:
+    post:
+      tags:
+        - User
+      summary: Get data to initiate first payment
+      operationId: userPreparePayment
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Get data to initiate first payment
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userPaymentInitiation'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+      requestBody:
+        description: Tariff id to set
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  example: 100500
+
+  /api/v1/user/card:
+    delete:
+      tags:
+        - User
+      summary: Delete user card
+      operationId: userDeleteCard
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Card deleted
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/admin/user/{userId}/grant_admin:
+    post:
+      tags:
+        - Admin
+      summary: Grant admin rights to user
+      operationId: grantAdmin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: '507f191e810c19729de860ea'
+          description: User id
+      responses:
+        '200':
+          description: Grant admin rights to user
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/admin/user/{userId}/revoke_admin:
+    post:
+      tags:
+        - Admin
+      summary: Revoke admin rights to user
+      operationId: revokeAdmin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: '507f191e810c19729de860ea'
+          description: User id
+      responses:
+        '200':
+          description: Revoke admin rights to user
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/admin/feature:
+    get:
+      tags:
+        - Admin
+      summary: Get features list
+      operationId: getFeaturesList
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Get features list
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/featuresList'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+    post:
+      tags:
+        - Admin
+      summary: Create feature
+      operationId: createFeature
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Create feature
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/feature'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+      requestBody:
+        description: Tariff id to set
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Landings count"
+                description:
+                  type: "string"
+                  example: "Maximum number of created landings"
+                code:
+                  type: "string"
+                  example: "landings_count"
+                isMeasurable:
+                  type: "boolean"
+                  example: false
+                measureName:
+                  type: "string"
+                  example: "landings"
+
+  /api/v1/admin/feature/{featureId}:
+    get:
+      tags:
+        - Admin
+      summary: Get feature
+      operationId: getFeature
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: featureId
+          required: true
+          schema:
+            type: string
+            example: '507f191e810c19729de860ea'
+          description: feature id
+      responses:
+        '200':
+          description: Get feature
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/feature'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+    patch:
+      tags:
+        - Admin
+      summary: Update feature
+      operationId: updateFeature
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: featureId
+          required: true
+          schema:
+            type: string
+            example: '507f191e810c19729de860ea'
+          description: feature id
+      responses:
+        '200':
+          description: Update feature
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/feature'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+      requestBody:
+        description: Tariff id to set
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Landings count"
+                description:
+                  type: "string"
+                  example: "Maximum number of created landings"
+                code:
+                  type: "string"
+                  example: "landings_count"
+                isMeasurable:
+                  type: "boolean"
+                  example: false
+                measureName:
+                  type: "string"
+                  example: "landings"
+                isArchived:
+                  type: "boolean"
+                  example: false
+
+  /api/v1/admin/tariff:
+    get:
+      tags:
+        - Admin
+      summary: Get tariffs list
+      operationId: getTariffsList
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Get tariffs list
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tariffList'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+    post:
+      tags:
+        - Admin
+      summary: Create tariff
+      operationId: createTariff
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Create tariff
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tariff'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+      requestBody:
+        description: Tariff id to set
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dayPrice:
+                  type: "number"
+                  example: 1
+                features:
+                  type: "object"
+                name:
+                  type: "string"
+                  example: "Free"
+                description:
+                  type: "string"
+                  example: "Free tariff for beginners"
+                periodDays:
+                  type: "number"
+                  example: 30
+
+  /api/v1/admin/tariff/{tariffId}:
+    get:
+      tags:
+        - Admin
+      summary: Get tariff
+      operationId: getTariff
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: tariffId
+          required: true
+          schema:
+            type: string
+            example: '507f191e810c19729de860ea'
+          description: tariff id
+      responses:
+        '200':
+          description: Get tariff
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tariff'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+    patch:
+      tags:
+        - Admin
+      summary: Update tariff
+      operationId: updateTariff
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: tariffId
+          required: true
+          schema:
+            type: string
+            example: '507f191e810c19729de860ea'
+          description: tariff id
+      responses:
+        '200':
+          description: Update tariff
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tariff'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+      requestBody:
+        description: Tariff id to set
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dayPrice:
+                  type: "number"
+                  example: 1
+                features:
+                  type: "array"
+                  items:
+                    type: "string"
+                name:
+                  type: "string"
+                  example: "Free"
+                description:
+                  type: "string"
+                  example: "Free tariff for beginners"
+                periodDays:
+                  type: "number"
+                  example: 30
+                isArchived:
+                  type: "boolean"
+                  example: false
+
+  /api/v1/admin/tariff/{tariffId}/default:
+    post:
+      tags:
+        - Admin
+      summary: Set tariff as default
+      operationId: setTariffAsDefault
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: tariffId
+          required: true
+          schema:
+            type: string
+            example: '507f191e810c19729de860ea'
+          description: tariff id
+      responses:
+        '200':
+          description: Set tariff as default
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tariff'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/admin/accounting/public:
+    get:
+      tags:
+        - Admin
+      summary: Get public accounting entries
+      operationId: getPublicAccounting
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: operationCode
+          in: query
+          schema:
+            type: string
+            example: topup
+        - name: limit
+          in: query
+          schema:
+            type: number
+            example: 100
+        - name: offset
+          in: query
+          schema:
+            type: number
+            example: 0
+      responses:
+        '200':
+          description: Get public accounting entries
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountingEntriesList'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/admin/accounting/public/{userId}:
+    get:
+      tags:
+        - Admin
+      summary: Get public accounting entries for user
+      operationId: getPublicAccountingForUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: '507f191e810c19729de860ea'
+          description: user id
+        - name: operationCode
+          in: query
+          schema:
+            type: string
+            example: topup
+        - name: limit
+          in: query
+          schema:
+            type: number
+            example: 100
+        - name: offset
+          in: query
+          schema:
+            type: number
+            example: 0
+      responses:
+        '200':
+          description: Get public accounting entries for user
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountingEntriesListWithBalance'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/admin/accounting/internal:
+    get:
+      tags:
+        - Admin
+      summary: Get private accounting entries
+      operationId: getPrivateAccounting
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: operationCode
+          in: query
+          schema:
+            type: string
+            example: topup
+        - name: limit
+          in: query
+          schema:
+            type: number
+            example: 100
+        - name: offset
+          in: query
+          schema:
+            type: number
+            example: 0
+      responses:
+        '200':
+          description: Get private accounting entries
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountingEntriesList'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/admin/accounting/internal/{userId}:
+    get:
+      tags:
+        - Admin
+      summary: Get private accounting entries for user
+      operationId: getPrivateAccountingForUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: '507f191e810c19729de860ea'
+          description: user id
+        - name: operationCode
+          in: query
+          schema:
+            type: string
+            example: topup
+        - name: limit
+          in: query
+          schema:
+            type: number
+            example: 100
+        - name: offset
+          in: query
+          schema:
+            type: number
+            example: 0
+      responses:
+        '200':
+          description: Get private accounting entries for user
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountingEntriesListWithBalance'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+  /api/v1/tariff:
+    get:
+      tags:
+        - Tariff
+      summary: Tariffs list
+      operationId: tariffList
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Tariffs list
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tariffList'
+
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+
+
   /api/v1/mailchimp/login:
     get:
       tags:
@@ -2453,6 +3743,75 @@ paths:
                   type: string
                   format: image/jpeg|image/png
 
+  /api/v1/webhooks/stripe:
+    post:
+      tags:
+        - Webhooks
+      summary: Webhook handler for Stripe payments
+      operationId: stripeWebhook
+      description: Adds a landing for user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Payment received
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+
+
+        '400':
+          description: Bad request
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+                format: uuid
+                description: Unique id of current request, to match records in log
+                example: 'f7314976-f9fc-450f-b46e-b77fbe793f94'
+            Date:
+              schema:
+                type: string
+                description: Current server date and time
+                example: 'Thu, 24 Jan 2019 13:03:49 GMT'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnathorized'
+      requestBody:
+        description: Landing page to add
+        content:
+          application/json:
+            schema:
+              type: object
+
 components:
 
   securitySchemes:
@@ -2707,6 +4066,10 @@ components:
         - emailConfirmed
         - mailchimpIntegration
         - registrationSource
+        - tariff
+        - subscriptionState
+        - cardBrand
+        - cardLast4
         - createDate
         - updateDate
       properties:
@@ -2728,6 +4091,18 @@ components:
         registrationSource:
           type: string
           example: local
+        tariff:
+          type: string
+          example: 5f53ee77ea0c9a00a8c88082
+        subscriptionState:
+          type: number
+          example: 0
+        cardBrand:
+          type: string
+          example: visa
+        cardLast4:
+          type: string
+          example: 4448
         createDate:
           type: string
           example: "2020-05-23T18:20:18.795Z"
@@ -2764,3 +4139,187 @@ components:
         cdnUrl:
           type: string
           example: https://mycdn.net/path/to/file/image.png
+
+    feature:
+      type: object
+      properties:
+        _id:
+          type: "string"
+          example: "5f51769630e5fb53e0b94cbd"
+        name:
+          type: "string"
+          example: "Landings count"
+        description:
+          type: "string"
+          example: "Maximum number of created landings"
+        code:
+          type: "string"
+          example: "landings_count"
+        isBackend:
+          type: "boolean"
+          example: true
+        isMeasurable:
+          type: "boolean"
+          example: false
+        measureName:
+          type: "string"
+          example: "landings"
+        createDate:
+          type: "string"
+          example: "2020-09-03T23:04:54.368Z"
+        updateDate:
+          type: "string"
+          example: "2020-09-03T23:04:54.370Z"
+        isArchived:
+          type: "boolean"
+          example: false
+
+    featuresList:
+      type: object
+      properties:
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/feature'
+
+    tariff:
+      type: object
+      properties:
+        _id:
+          type: "string"
+          example: "5f53ee77ea0c9a00a8c88082"
+        createDate:
+          type: "string"
+          example: "2020-09-05T20:00:55.252Z"
+        dayPrice:
+          type: "number"
+          example: 1
+        features:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              feature:
+                $ref: '#/components/schemas/feature'
+              volume:
+                type: "number"
+                example: 3
+        isArchived:
+          type: "boolean"
+          example: false
+        isDefault:
+          type: "boolean"
+          example: true
+        name:
+          type: "string"
+          example: "Free"
+        description:
+          type: "string"
+          example: "Free tariff for beginners"
+        periodDays:
+          type: "number"
+          example: 30
+        updateDate:
+          type: "string"
+          example: "2020-09-05T20:00:55.252Z"
+
+    tariffList:
+      type: object
+      properties:
+        tariffs:
+          type: array
+          items:
+            $ref: '#/components/schemas/tariff'
+
+    accountingEntry:
+      type: object
+      required:
+        - "_id"
+        - "userId"
+        - "createDate"
+        - "amount"
+        - "ip"
+        - "mask"
+        - "name"
+      properties:
+        _id:
+          type: "string"
+          example: "5f5d101726c6e2480c884d04"
+        userId:
+          type: "string"
+          example: "5f516e495410f830589eb078"
+        createDate:
+          type: "string"
+          example: "2020-09-05T20:00:55.252Z"
+        amount:
+          type: "number"
+          example: 100
+        ip:
+          type: "string"
+          example: "127.0.0.1"
+        mask:
+          type: "string"
+          example: "444444******4444"
+        name:
+          type: "string"
+          example: "topup account"
+        operationCode:
+          type: "string"
+          example: "topup"
+
+    accountingEntriesList:
+      type: object
+      properties:
+        limit:
+          type: number
+        offset:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/accountingEntry'
+        currency:
+          type: "string"
+          example: "USD"
+
+
+    accountingEntriesListWithBalance:
+      type: object
+      properties:
+        limit:
+          type: number
+        offset:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/accountingEntry'
+        balance:
+          type: number
+          example: 116
+        currency:
+          type: "string"
+          example: "USD"
+
+    userBalance:
+      type: object
+      required:
+        - "balance"
+        - "currency"
+      properties:
+        balance:
+          type: "number"
+          example: 116
+        currency:
+          type: "string"
+          example: "USD"
+
+    userPaymentInitiation:
+      type: object
+      properties:
+        publicKey:
+          type: string
+        clientSecret:
+          type: string
+        id:
+          type: string
