@@ -42,7 +42,7 @@ module.exports = async (ctx, next) => {
         }
 
         const tariffsList = new TariffsList(ctx);
-        const defaultTariff = tariffsList.GetDefault();
+        const defaultTariff = await tariffsList.GetDefault();
         if (defaultTariff) {
             await user.SetTariff(defaultTariff._id);
         }
