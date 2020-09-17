@@ -151,6 +151,7 @@ router
     .get(`${userRoutesNamespace}/tariff`, require('../actions/user/get-user-tariff'))
     .post(`${userRoutesNamespace}/prepare-payment`, koaBody, require('../actions/user/prepare-payment'))
     .delete(`${userRoutesNamespace}/card`, require('../actions/user/remove-card'))
+    .delete(`${userRoutesNamespace}/cancel-subscription`, require('../actions/user/cancel-subscription'))
     .post(`${userRoutesNamespace}/set-tariff`, koaBody, require('../actions/user/set-tariff'))
     .get(`${userRoutesNamespace}/payments-history`, require('../actions/user/get-payments-history'))
     .get(`${userRoutesNamespace}/balance`, require('../actions/user/get-balance'))
