@@ -68,6 +68,8 @@ module.exports = {
             throw new Error('no ctx')
         }
 
+        params = params || {};
+
         const user = params.user || _.get(ctx, config.userStatePath);
 
         let maxTotalFilesSize = -1;
