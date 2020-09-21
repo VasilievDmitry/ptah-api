@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 
+const config = require('../../../config/config');
 const {Payment} = require('../../../common/classes/payment.class');
 const Factory = require('../../../common/classes/factory');
 

@@ -1,6 +1,6 @@
 'use strict';
 
-const {INTERNAL_SERVER_ERROR} = require('../../../../config/errors');
+const {INTERNAL_SERVER_ERROR, NOT_FOUND} = require('../../../../config/errors');
 
 const {Feature} = require('../../../../common/classes/feature.class');
 const {FeaturesList} = require('../../../../common/classes/features-list.class');
