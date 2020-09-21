@@ -30,7 +30,7 @@ module.exports = async (ctx, next) => {
             // noinspection PointlessArithmeticExpressionJS
             updateParams.dayPrice = dayPrice * 1;
         }
-        if (typeof periodDays !== 'undefined' && isNumber(periodDays)) {
+        if (typeof periodDays !== 'undefined' && !Number.isNaN(periodDays)) {
             // noinspection PointlessArithmeticExpressionJS
             updateParams.periodDays = periodDays * 1;
         }
