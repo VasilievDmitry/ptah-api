@@ -16,7 +16,7 @@ const {UserSession} = require('../../common/classes/user-session.class');
 const {AccountingUser, AccountingInternal, OPERATION_CODE_TOPUP, OPERATION_CODE_TARIFF} = require('../../common/classes/accounting.class');
 const generatePassword = require('../../common/utils/password').generatePassword;
 
-const defaultTariffId = '5f53ee77ea0c9a00a8c88082';
+const testTariffId = '5f6a5e4c046d52d20b9061bd';
 
 
 const getRequestId = () => Math.random().toString(36).substring(2) +
@@ -103,7 +103,7 @@ MongoClient.connect(config.mongoDsn, {useUnifiedTopology: true}, async function 
         for (const uuid of [uuidv4(), uuidv4()]) {
             const user = new User(fakeCtx, paramsUser);
             await user.CreateUser(uuid, uuid + '@test.com', generatePassword(), 'unit-test');
-            await user.SetTariff(defaultTariffId);
+            await user.SetTariff(testTariffId);
             await user.SetSubscriptionState(0);
             if (i) {
                 await user.EnableMailchimpIntegration(uuidv4());

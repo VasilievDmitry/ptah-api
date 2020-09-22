@@ -2519,13 +2519,13 @@ paths:
         - name: emailConfirmed
           in: query
           schema:
-            type: number
-            example: 1
+            type: boolean
+            example: true
         - name: mailchimpIntegration
           in: query
           schema:
-            type: number
-            example: 1
+            type: boolean
+            example: true
         - name: tariff
           in: query
           schema:
@@ -2703,8 +2703,8 @@ paths:
         - name: isPublished
           in: query
           schema:
-            type: number
-            example: 1
+            type: boolean
+            example: true
         - name: userId
           in: query
           schema:
@@ -4512,8 +4512,13 @@ components:
       properties:
         limit:
           type: number
+          example: 100
         offset:
           type: number
+          example: 0
+        count:
+          type: number
+          example: 10
         items:
           type: array
           items:
@@ -4528,8 +4533,13 @@ components:
       properties:
         limit:
           type: number
+          example: 100
         offset:
           type: number
+          example: 0
+        count:
+          type: number
+          example: 10
         items:
           type: array
           items:

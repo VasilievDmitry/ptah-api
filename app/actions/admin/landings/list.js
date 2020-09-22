@@ -28,13 +28,11 @@ module.exports = async (ctx, next) => {
             condition.userId = ObjectID(ctx.query.userId);
         }
 
-        if (ctx.query.isPublished !== undefined) {
-            condition.isPublished = ctx.query.isPublished === '1';
+        if (typeof ctx.query.isPublished === 'string' && ctx.query.isPublished) {
+            condition.isPublished = ctx.query.isPublished.toLowerCase() === 'true';
         }
 
         const collection = getDbCollection.landings(ctx);
-
-        let result = [];
 
         const r = await ctx.mongoTransaction(
             collection,
@@ -45,15 +43,15 @@ module.exports = async (ctx, next) => {
             ]
         )
 
-        result = await r.toArray();
-
         const defaultLanding = _.omit(getDefaultLanding(), ['landing', 'isDeleted']);
+
+        const landings = await r.skip(offset).limit(limit).toArray();
 
         ctx.body = {
             limit: limit,
             offset: offset,
-            total: result.length,
-            landings: result.slice(offset, offset + limit).map(l => Object.assign({}, defaultLanding, l))
+            total: await r.count(),
+            landings: landings.map(l => Object.assign({}, defaultLanding, l))
         }
 
         ctx.status = 200;

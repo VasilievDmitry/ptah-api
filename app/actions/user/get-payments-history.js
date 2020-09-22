@@ -15,14 +15,8 @@ module.exports = async (ctx, next) => {
 
         const accountingUser = new AccountingUser(ctx);
 
-        const history = await accountingUser.GetUserHistory(userId, '', limit, offset);
-
+        ctx.body = await accountingUser.GetUserHistory(userId, '', limit, offset);
         ctx.status = 200;
-        ctx.body = {
-            limit: limit,
-            offset: offset,
-            items: history
-        };
 
     } catch (err) {
         return ctx.throw(err.status || 500, err.message)

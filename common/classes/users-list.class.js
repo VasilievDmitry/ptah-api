@@ -45,13 +45,13 @@ class UsersList {
         const projection = {};
         PUBLIC_FIELDS.forEach(f => projection[f] = 1);
 
-        const foundUsers = await this.find(condition, projection);
+        const cursor = await this.find(condition, projection);
 
         return {
             limit: limit,
             offset: offset,
-            total: foundUsers.length,
-            users: foundUsers.slice(offset, offset + limit)
+            total: await cursor.count(),
+            users: await cursor.skip(offset).limit(limit).toArray(),
         }
     }
 
@@ -71,7 +71,8 @@ class UsersList {
             ],
             isDeleted: false,
         }
-        return this.find(condition);
+        const cursor = this.find(condition);
+        return cursor.toArray();
     }
 
     async GetActiveBilling() {
@@ -86,7 +87,8 @@ class UsersList {
             ],
             isDeleted: false,
         }
-        return this.find(condition);
+        const cursor = this.find(condition);
+        return cursor.toArray();
     }
 
     async find(conditions, projection) {
@@ -100,7 +102,7 @@ class UsersList {
         const query = Object.assign({}, conditions, {})
 
         try {
-            const r = await this.ctx.mongoTransaction(
+            return this.ctx.mongoTransaction(
                 this.collection,
                 'find',
                 [
@@ -109,13 +111,13 @@ class UsersList {
                 ]
             )
 
-            const result = await r.toArray();
+            /*const result = await r.toArray();
 
             if (!result) {
                 return null;
             }
 
-            return result;
+            return result;*/
 
         } catch (err) {
             throw err;

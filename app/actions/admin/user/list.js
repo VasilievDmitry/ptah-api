@@ -13,7 +13,7 @@ module.exports = async (ctx, next) => {
 
         const filter = {};
 
-        if (ctx.query.subscriptionState !== undefined) {
+        if (Number.isInteger(ctx.query.subscriptionState * 1)) {
             filter.subscriptionState = ctx.query.subscriptionState * 1;
         }
 
@@ -21,12 +21,12 @@ module.exports = async (ctx, next) => {
             filter.tariff = ctx.query.tariff;
         }
 
-        if (ctx.query.emailConfirmed !== undefined) {
-            filter.emailConfirmed = ctx.query.emailConfirmed === '1';
+        if (typeof ctx.query.emailConfirmed === 'string' && ctx.query.emailConfirmed) {
+            filter.emailConfirmed = ctx.query.emailConfirmed.toLowerCase() === 'true';
         }
 
-        if (ctx.query.mailchimpIntegration !== undefined) {
-            filter.mailchimpIntegration = ctx.query.mailchimpIntegration === '1';
+        if (typeof ctx.query.mailchimpIntegration === 'string' && ctx.query.mailchimpIntegration) {
+            filter.mailchimpIntegration = ctx.query.mailchimpIntegration.toLowerCase() === 'true';
         }
 
         ctx.body = await usersList.GetByFilters(filter, limit, offset);

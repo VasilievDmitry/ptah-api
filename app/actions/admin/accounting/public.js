@@ -21,19 +21,13 @@ module.exports = async (ctx, next) => {
 
         const accountingUser = new AccountingUser(ctx);
 
-        const history = await accountingUser.GetUserHistory(userId, operationCode, limit, offset);
-
-        ctx.status = 200;
-        ctx.body = {
-            limit: limit,
-            offset: offset,
-            items: history,
-            currency: 'USD',
-        };
+        ctx.body = await accountingUser.GetUserHistory(userId, operationCode, limit, offset);
 
         if (userId) {
             ctx.body.balance = await accountingUser.GetUserBalance(userId);
         }
+
+        ctx.status = 200;
 
     } catch (err) {
         return ctx.throw(err.status || 500, err.message)

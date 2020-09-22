@@ -88,13 +88,16 @@ class AbstractAccounting {
                 ]
             )
 
-            const result = await r.skip(offset).limit(limit).toArray();
+            const count = await r.count();
+            const items = await r.skip(offset).limit(limit).toArray();
 
-            if (!result || !result.length) {
-                return [];
+            return {
+                limit: limit,
+                offset: offset,
+                count: count,
+                items: items,
+                currency: 'USD',
             }
-
-            return result;
 
         } catch (err) {
             throw e;
