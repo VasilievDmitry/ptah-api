@@ -1,5 +1,7 @@
 "use strict";
 
+const ObjectID = require('bson-objectid');
+
 const Factory = require('./factory');
 const getDbCollection = require('../utils/get-db-collection');
 
@@ -16,12 +18,12 @@ class FeatureCheck {
 
         const condition = {
             isDeleted: false,
-            userId: userId
+            userId: ObjectID(userId),
         };
 
         const collection = getDbCollection.landings(ctx);
 
-        let result = [];
+        let count = 0;
 
         try {
             const r = await ctx.mongoTransaction(
@@ -29,16 +31,16 @@ class FeatureCheck {
                 'find',
                 [
                     condition,
-                    {projection: {landing: 0}},
+                    {projection: {_id: 1}},
                 ]
             )
 
-            result = await r.toArray();
+            count = await r.count();
         } catch (err) {
             return false;
         }
 
-        return Array.isArray(result) && includeEqual ? result.length <= value : result.length < value;
+        return includeEqual ? count <= value : count < value;
     }
 
     // value - maximum allowed quote in megabytes
@@ -71,7 +73,7 @@ class FeatureCheck {
 
         const condition = {
             isDeleted: false,
-            userId: userId
+            userId: ObjectID(userId),
         };
 
         const collection = getDbCollection.landings(ctx);
