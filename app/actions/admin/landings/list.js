@@ -1,5 +1,6 @@
 'use strict';
 
+const _ = require('lodash');
 const ObjectID = require("bson-objectid");
 
 const config = require('../../../../config/config');
@@ -23,11 +24,11 @@ module.exports = async (ctx, next) => {
         const limit = (ctx.query.limit || 0) * 1 || config.pagingDefaultLimit;
         const offset = (ctx.query.offset || 0) * 1 || 0;
 
-        if (ctx.query.userId !== '') {
+        if (ctx.query.userId !== undefined) {
             condition.userId = ObjectID(ctx.query.userId);
         }
 
-        if (ctx.query.isPublished !== '') {
+        if (ctx.query.isPublished !== undefined) {
             condition.isPublished = ctx.query.isPublished === '1';
         }
 

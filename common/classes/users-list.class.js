@@ -45,7 +45,7 @@ class UsersList {
         const projection = {};
         PUBLIC_FIELDS.forEach(f => projection[f] = 1);
 
-        const foundUsers = this.find(condition, projection);
+        const foundUsers = await this.find(condition, projection);
 
         return {
             limit: limit,
