@@ -35,4 +35,5 @@ module.exports = {
     NOT_ENOUGH_MONEY: 'not_enough_money',
     FEATURE_VOLUME_INVALID: 'feature_volume_invalid',
     NON_MEASUREABLE_FEATURE_VOLUME_INVALID: 'non_measureable_feature_volume_invalid',
+    TARIFF_HAS_NO_FEATURES: 'tariff_has_no_features',
 };
