@@ -47,7 +47,7 @@ function start(loggerInstance) {
             `${config.routesPrefix}${config.authRoutesNamespace}/google/callback`,
             `${config.routesPrefix}${config.authRoutesNamespace}/mailchimp`,
             `${config.routesPrefix}${config.authRoutesNamespace}/mailchimp/callback`,
-            `${config.routesPrefix}${config.tariffsRoutesNamespace}/`,
+            `${config.routesPrefix}${config.tariffsRoutesNamespace}`,
             `${config.routesPrefix}${config.webhooksRoutesNamespace}/stripe`,
         ]
     };

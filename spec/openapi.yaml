@@ -3592,7 +3592,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorUnathorized'
 
-  /api/v1/tariff:
+  /api/v1/tariffs:
     get:
       tags:
         - Tariff
