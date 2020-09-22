@@ -1,6 +1,6 @@
 'use strict';
 
-const {NOT_FOUND, INTERNAL_SERVER_ERROR} = require('../../../../config/errors');
+const {NOT_FOUND, INTERNAL_SERVER_ERROR, FEATURE_VOLUME_INVALID, NON_MEASUREABLE_FEATURE_VOLUME_INVALID} = require('../../../../config/errors');
 
 const {Tariff} = require('../../../../common/classes/tariff.class');
 const {TariffsList} = require('../../../../common/classes/tariffs-list.class');
@@ -17,14 +17,18 @@ module.exports = async (ctx, next) => {
         }
 
         const name = ctx.request.body.name || '';
+        const description = ctx.request.body.description || '';
         const dayPrice = ctx.request.body.dayPrice;
         const periodDays = ctx.request.body.periodDays;
-        const tariffFeatures = ctx.request.body.features;
+        const tariffFeatures = ctx.request.body.features || [];
         const isArchived = ctx.request.body.isArchived;
 
         const updateParams = {};
         if (name) {
             updateParams.name = name;
+        }
+        if (description) {
+            updateParams.description = description;
         }
         if (typeof dayPrice !== 'undefined' && !Number.isNaN(dayPrice)) {
             // noinspection PointlessArithmeticExpressionJS
@@ -38,7 +42,7 @@ module.exports = async (ctx, next) => {
             updateParams.isArchived = !!isArchived;
         }
 
-        if (typeof tariffFeatures !== 'undefined' && Object.keys(tariffFeatures).length) {
+        if (Array.isArray(tariffFeatures) && tariffFeatures.length) {
 
             const featuresList = new FeaturesList(ctx);
             const features = await featuresList.GetAll();
@@ -46,9 +50,19 @@ module.exports = async (ctx, next) => {
                 return ctx.throw(500, INTERNAL_SERVER_ERROR);
             }
             const activeFeaturesId = features.map(f => f.isArchived ? null : f._id.toString()).filter(Boolean);
-            Object.keys(tariffFeatures).forEach(tf => {
-                if (activeFeaturesId.indexOf(tf) < 0) {
+            const activeNonMeasureableFeaturesId = features.map(f => f.isArchived || f.isMeasurable ? null : f._id.toString()).filter(Boolean);
+            tariffFeatures.forEach(tf => {
+                if (tf.volume < 0) {
+                    return ctx.throw(400, FEATURE_VOLUME_INVALID);
+                }
+
+                if (activeFeaturesId.indexOf(tf.id) < 0) {
                     return ctx.throw(400, FEATURE_NOT_FOUND_OR_ARCHIVED);
+                }
+            })
+            tariffFeatures.forEach(tf => {
+                if (activeNonMeasureableFeaturesId.indexOf(tf.id) >=0 && tf.volume > 1 ) {
+                    return ctx.throw(400, NON_MEASUREABLE_FEATURE_VOLUME_INVALID);
                 }
             })
             updateParams.features = tariffFeatures;

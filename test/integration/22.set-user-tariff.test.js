@@ -42,11 +42,11 @@ describe(`${routesPrefix}`, () => {
             .set('authorization', `Bearer ${fakes.fakeUserAuthToken}`)
             .send({
                 "dayPrice": 1,
-                "features": {
-                    "5f51769630e5fb53e0b94cbd": 1,
-                    "5f5176d730e5fb53e0b94cce": 50,
-                    "5f53e591e36dd80b9caaf9f2": 1
-                },
+                "features": [
+                    {"id": "5f51769630e5fb53e0b94cbd", "volume": 3},
+                    {"id": "5f5176d730e5fb53e0b94cce", "volume": 50},
+                    {"id": "5f53e591e36dd80b9caaf9f2", "volume": 0}
+                ],
                 "name": "Test",
                 "description": "Test tariff",
                 "periodDays": 30

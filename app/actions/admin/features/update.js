@@ -24,6 +24,7 @@ module.exports = async (ctx, next) => {
         }
 
         const name = ctx.request.body.name || '';
+        const description = ctx.request.body.description || '';
         const code = ctx.request.body.code || '';
         const isMeasurable = ctx.request.body.isMeasurable;
         const measureName = ctx.request.body.measureName || '';
@@ -32,6 +33,9 @@ module.exports = async (ctx, next) => {
         const updateParams = {};
         if (name) {
             updateParams.name = name;
+        }
+        if (description) {
+            updateParams.description = description;
         }
         if (code) {
             updateParams.code = code;

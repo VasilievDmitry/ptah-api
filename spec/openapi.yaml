@@ -3109,7 +3109,16 @@ paths:
                   type: "number"
                   example: 1
                 features:
-                  type: "object"
+                  type: "array"
+                  items:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "string"
+                        example: "5f51769630e5fb53e0b94cbd"
+                      volume:
+                        type: "number"
+                        example: 1
                 name:
                   type: "string"
                   example: "Free"
@@ -3239,7 +3248,16 @@ paths:
                   type: "number"
                   example: 1
                 features:
-                  type: "object"
+                  type: "array"
+                  items:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "string"
+                        example: "5f51769630e5fb53e0b94cbd"
+                      volume:
+                        type: "number"
+                        example: 1
                 name:
                   type: "string"
                   example: "Free"

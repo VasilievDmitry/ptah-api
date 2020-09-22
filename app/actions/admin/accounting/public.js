@@ -10,8 +10,8 @@ const config = require('../../../../config/config');
 module.exports = async (ctx, next) => {
     try {
         const userId = ctx.params.userId || '';
-        if (!ObjectID.isValid(userId)) {
-            return ctx.throw(404, BAD_REQUEST);
+        if (userId && !ObjectID.isValid(userId)) {
+            return ctx.throw(400, BAD_REQUEST);
         }
 
         const operationCode = ctx.query.operationCode || '';

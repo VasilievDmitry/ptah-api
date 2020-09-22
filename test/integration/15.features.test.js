@@ -75,7 +75,7 @@ describe(`${routesPrefix}`, () => {
             .set('authorization', `Bearer ${fakes.fakeUserAuthToken}`)
             .send({
                 "code": "gtag_allowed_" + Math.random(),
-                "isMeasured": false,
+                "isMeasureable": false,
                 "measureName": "",
                 "name": "Google Tag allowed",
                 "description": "",

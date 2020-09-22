@@ -135,11 +135,11 @@ class TariffsList {
         for (let tariff of tariffsList) {
             const features = [];
             const tariffFeatures = tariff[TARIFF_FEATURES_FIELD];
-            for (let featureId of Object.keys(tariffFeatures)) {
-                const featureObj = await feature.FindById(featureId);
+            for (let featureDesc of tariffFeatures) {
+                const featureObj = await feature.FindById(featureDesc.id);
                 const f = {
                     feature: featureObj,
-                    volume: tariffFeatures[featureId],
+                    volume: featureDesc.volume,
                 }
                 features.push(f);
             }

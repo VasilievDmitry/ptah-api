@@ -21,7 +21,7 @@ function getDefaultTariff() {
         dayPrice: 0,
         periodDays: 30,
         isDefault: false,
-        features: {},
+        features: [],
         createDate: now,
         updateDate: now,
         isArchived: false,

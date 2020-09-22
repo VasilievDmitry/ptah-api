@@ -32,11 +32,11 @@ module.exports = {
                 "_id": ObjectID("5f53ee77ea0c9a00a8c88082"),
                 "createDate": "2020-09-05T20:00:55.252Z",
                 "dayPrice": 0,
-                "features": {
-                    "5f51769630e5fb53e0b94cbd": 3,
-                    "5f5176d730e5fb53e0b94cce": 50,
-                    "5f53e591e36dd80b9caaf9f2": 0,
-                },
+                "features": [
+                    {"id": "5f51769630e5fb53e0b94cbd", "volume": 3},
+                    {"id": "5f5176d730e5fb53e0b94cce", "volume": 50},
+                    {"id": "5f53e591e36dd80b9caaf9f2", "volume": 0},
+                ],
                 "isArchived": false,
                 "isDefault": true,
                 "name": "Free",
@@ -50,11 +50,11 @@ module.exports = {
                 "_id": ObjectID("5f53ee77213eda00a88adcff"),
                 "createDate": "2020-09-05T20:00:55.252Z",
                 "dayPrice": 0,
-                "features": {
-                    "5f51769630e5fb53e0b94cbd": 3,
-                    "5f5176d730e5fb53e0b94cce": 50,
-                    "5f53e591e36dd80b9caaf9f2": 0,
-                },
+                "features": [
+                    {"id": "5f51769630e5fb53e0b94cbd", "volume": 3},
+                    {"id": "5f5176d730e5fb53e0b94cce", "volume": 50},
+                    {"id": "5f53e591e36dd80b9caaf9f2", "volume": 0},
+                ],
                 "isArchived": false,
                 "isDefault": true,
                 "name": "Free",

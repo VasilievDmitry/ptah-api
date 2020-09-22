@@ -33,4 +33,6 @@ module.exports = {
     FEATURE_NOT_ALLOWED_OR_LIMIT_EXCEEDED: 'feature_not_allowed_or_limit_exceeded',
     TARIFF_PRICE_TOO_MUCH_FOR_DEFAULT: 'tariff_price_too_much_for_default',
     NOT_ENOUGH_MONEY: 'not_enough_money',
+    FEATURE_VOLUME_INVALID: 'feature_volume_invalid',
+    NON_MEASUREABLE_FEATURE_VOLUME_INVALID: 'non_measureable_feature_volume_invalid',
 };
