@@ -88,7 +88,8 @@ describe(`POST ${routesPrefix}/{landingId}/domain`, () => {
             .post(`${routesPrefix}/${landingId}/domain`)
             .set('authorization', `Bearer ${fakes.fakeUserAuthToken}`)
             .send({
-                domain: 'invalid_domain.com'
+                domain: 'invalid_domain.com',
+                personal: true,
             })
             .end((err, res) => {
                 should.not.exist(err);

@@ -9,7 +9,7 @@
     "migrations:manual": "cross-env NODE_ENV=local migrate-mongo up",
     "tests:migrations": "migrate-mongo up",
     "tests:generator": "node ./test/fakes/generator.js",
-    "tests:mocha": "node_modules/.bin/mocha --exit ./test/index.js",
+    "tests:mocha": "node_modules/.bin/mocha --timeout 3000 --exit ./test/index.js",
     "debug:app.mock": "cross-env NODE_ENV=test REDIS_HOST='' MOCK_SERVER_PORT=3007 MAILCHIMP_METADATA_URL=http://localhost:3007/oauth2/metadata nodemon --ignore './public_html' --ignore './sites_enabled' --ignore './node_modules' -w ./ ./index.js",
     "debug:mock.server": "cross-env NODE_ENV=test nodemon --ignore './public_html' --ignore './sites_enabled' --ignore './node_modules' -w ./ ./test/fakes/external-servers-mockup.js"
   },

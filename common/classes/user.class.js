@@ -281,9 +281,8 @@ class User {
         }
     }
 
-    async SetSubscriptionState(state) {
-        state = state || null;
-        if (Object.values(subscriptionStates).indexOf(state) < 0) {
+    async SetSubscriptionState(state = null) {
+        if (!Number.isInteger(state) || Object.values(subscriptionStates).indexOf(state) < 0) {
             return null;
         }
         try {

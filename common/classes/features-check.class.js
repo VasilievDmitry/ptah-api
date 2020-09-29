@@ -2,6 +2,7 @@
 
 const ObjectID = require('bson-objectid');
 
+const config = require('../../config/config');
 const Factory = require('./factory');
 const getDbCollection = require('../utils/get-db-collection');
 

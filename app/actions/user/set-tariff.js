@@ -2,7 +2,7 @@
 const _ = require('lodash');
 const config = require('../../../config/config');
 
-const {NOT_FOUND, FEATURE_NOT_ALLOWED_OR_LIMIT_EXCEEDED, NOT_ENOUGH_MONEY} = require('../../../config/errors');
+const {NOT_FOUND, FEATURE_NOT_ALLOWED_OR_LIMIT_EXCEEDED, NOT_ENOUGH_MONEY, INTERNAL_SERVER_ERROR} = require('../../../config/errors');
 
 const {AccountingUser, AccountingInternal, OPERATION_CODE_TARIFF} = require('../../../common/classes/accounting.class');
 const {TariffsList} = require('../../../common/classes/tariffs-list.class');
@@ -40,14 +40,14 @@ module.exports = async (ctx, next) => {
 
         const periodCost = tariff.dayPrice * tariff.periodDays;
         if (periodCost === 0) {
-            return await setTariff(ctx, next, user, newTariffId);
+            return await setTariff(ctx, next, user, newTariffId, periodCost);
         }
 
         const accountingInternal = new AccountingInternal(ctx);
         const balanceInternal = await accountingInternal.GetUserBalance(user.GetId(), OPERATION_CODE_TARIFF);
 
         if (balanceInternal >= periodCost) {
-            return await setTariff(ctx, next, user, newTariffId);
+            return await setTariff(ctx, next, user, newTariffId, periodCost);
         }
 
         const delta = periodCost - balanceInternal;
@@ -65,17 +65,21 @@ module.exports = async (ctx, next) => {
 
         await accountingUser.AddUserOperation(user.GetId(), delta * -1, OPERATION_CODE_TARIFF, 'change tariff');
         await accountingInternal.AddUserOperation(user.GetId(), delta, OPERATION_CODE_TARIFF, 'change tariff');
-        return await setTariff(ctx, next, user, newTariffId);
+        return await setTariff(ctx, next, user, newTariffId, periodCost);
 
     } catch (err) {
         return ctx.throw(err.status || 500, err.message)
     }
 };
 
-async function setTariff(ctx, nextFn, user, newTariffId) {
+async function setTariff(ctx, nextFn, user, newTariffId, cost = 0) {
     if (newTariffId) {
         await user.SetTariff(newTariffId);
-        ctx.body = await user.SetSubscriptionState(subscriptionStates.active);
+        const r = await user.SetSubscriptionState(cost > 0 ? subscriptionStates.active : subscriptionStates.inactive);
+        if (!r) {
+            return ctx.throw(500, INTERNAL_SERVER_ERROR);
+        }
+        ctx.body = r
     } else {
         ctx.body = user.GetUser();
     }

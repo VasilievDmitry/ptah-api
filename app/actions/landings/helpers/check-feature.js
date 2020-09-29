@@ -3,7 +3,7 @@
 const {TariffsList} = require('../../../../common/classes/tariffs-list.class');
 const {FeatureCheck} = require('../../../../common/classes/features-check.class')
 
-module.exports = async (ctx, user, featureCode) => {
+module.exports = async (ctx, user, featureCode, landing) => {
     const tariffsList = new TariffsList(ctx);
     const tariff = await tariffsList.GetById(user.tariff);
 
@@ -16,5 +16,5 @@ module.exports = async (ctx, user, featureCode) => {
         return false;
     }
 
-    return await FeatureCheck.CheckByCode(featureCode, ctx, user._id.toString(), feature.volume)
+    return await FeatureCheck.CheckByCode(featureCode, ctx, user._id.toString(), feature.volume, false, landing)
 }

@@ -25,6 +25,7 @@ jobs:
     - CONFIRM_EMAIL_SECRET=test
     - GOOGLE_AUTH_CLIENT_ID=test
     - GOOGLE_AUTH_CLIENT_SECRET=test
+    - LANDINGS_PUBLISHING_HOST=ptah.com
     install:
     - npm install -g codecov nyc mocha
     - npm ci
